@@ -1,0 +1,101 @@
+# Ajouts à l'enum GCommande
+
+public enum GCommande {
+
+    /**** Ajouts  ******/
+
+    CHOISIR_HAUTEUR,
+    CHOISIR_LARGEUR,
+    CHOISIR_POUR_GAGNER,
+
+    OUVRIR_MENU_PARAMETRES,
+    DEMARRER_PARTIE,
+
+    EFFACER_PARTIE_COURANTE,
+
+---------------
+# Ajouts à la classe SourceDeDonnees
+
+public abstract class SourceDeDonnees {
+
+    /******* Ajout ********/
+
+    public abstract void detruireSauvegarde(String cheminSauvegarde);
+
+---------------
+# Ajouts au ControleurModele
+
+public class ControleurModeles {
+
+    /******** Ajouts aux méthodes ********/
+
+    public static void detruireModele(String nomModele)
+        /*
+         * Détruire les sauvegardes
+         * Si le modèle est en mémoire
+         *     - oublier le modèle
+         *     - detruire l'observation
+         *     - oublier le modèle comme fournisseur (s'il y a lieu)
+         *
+         */
+
+    private static void detruireSauvegardes(String nomModele)
+
+---------------
+# Ajouts à la classe  Action
+
+public class Action {
+
+
+    /******* Ajout *******/
+
+
+    public boolean siExecutable()
+        /*
+         * Appeler le ConroleurAction
+         *  pour savoir si l'action est exécutable
+         */
+
+---------------
+# Reconception du  ListenerFournisseur
+
+public abstract class ListenerFournisseur {
+
+    public boolean siExecutable(Object... args)
+        /*
+         * L'implantation par défaut retourne toujours vrai
+         *
+         */
+
+    public abstract void executer(Object... args);
+
+---------------
+# Ajouts au ControleurAction
+
+public class ControleurAction {
+
+    /********** Ajout aux méthodes *******/
+
+    static boolean siActionExecutable(Action action)
+        /*
+         * Si le listener existe, demander au listener
+         *   si l'action est executable
+         */
+
+    public static void oublierFournisseur(Fournisseur fournisseur)
+        /*
+         * Itérer les actions
+         *     - mettre le fournisseur à null s'il y a lieu
+         *
+         */
+
+---------------
+# Ajouts au ControleurObservation
+
+public class ControleurObservation {
+
+    /******** Ajouts aux méthodes *********/
+
+    public static void detruireObservation(Modele modele)
+
+---------------

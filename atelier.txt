@@ -1,0 +1,171 @@
+<body ng-controller="root" root="" class="ng-scope"><div class="root ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/10/" markdown=""><div class="markdown"><h1 class="ng-scope">Atelier 10: Reconception et peaufinage</h1>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/10/objectifs_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/10/objectifs_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Objectifs</h2>
+
+<p class="ng-scope">À partir de l'application de l'Atelier #9:</p>
+
+<ol class="ng-scope">
+<li><em>Reconception</em>: s'assurer que chaque vue utilise:
+<ul><li>une observation pour obtenir le modèle</li>
+<li>des actions pour modifier le modèle ou pour passer à une autre activité</li></ul></li>
+<li><em>Reconception</em>: dans <code>MParametres</code>, le <code>pourGagner</code> maximum doit maintenant être calculé:
+<ul><li><code>pourGagnerMax = max(hauteur, largeur) * 75 / 100</code></li></ul></li>
+<li>Mise à jour «en direct» de la liste de choix de <code>pourGagner</code>:
+<ul><li>(note: le <code>pourGagner</code> est aussi ajusté lorsque trop haut pour le max)
+<center>
+<video width="250px" src="atelier10_pourgagner.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center></li></ul></li>
+<li>BONUS: Ajouter le code pour vérifier si un coup est possible
+<ul><li>désactiver le bouton si le coup est impossible
+<center>
+<video width="500px" src="atelier10_siexecutable.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center></li></ul></li>
+<li>BONUS: Dans <code>VParametres</code>, ajouter le bouton <em>Effacer partie courante</em>
+<center>
+<video width="500px" src="atelier10_effacer.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center></li>
+<li>BONUS: Durant la partie, surligner le prochain joueur à jouer
+<center>
+<video width="500px" src="atelier10_surligner_noms_joueurs.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center></li>
+</ol>
+
+<h3 class="ng-scope">NOTE</h3>
+
+<ul class="ng-scope">
+<li>Les objectifs BONUS ne seront pas évalués, mais peuvent être ré-utilisés lors du projet à la semaine 12.</li>
+<li>Autrement dit, les BONUS permettent de prendre de l'avance sur le projet</li>
+</ul></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/10/specification_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/10/specification_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Spécification</h2>
+
+<ul class="ng-scope">
+<li><p>Vous <strong>devez avoir</strong>:</p>
+
+<ul><li>chaque <em>classe et interface</em> de l'objectif</li>
+<li>chaque attribut ci-bas avec <strong>exactement</strong> le même type</li>
+<li>chaque méthode ci-bas avec <strong>exactement</strong> la même signature</li></ul></li>
+<li><p>Exception:</p>
+
+<ul><li>vous pouvez modifier/ajouter/ignorer des méthodes/attributs <code>private</code></li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Ajouts à l'enum <code>GCommande</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/GCommande.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> GCommande {
+
+    <span class="hljs-javadoc">/**** Ajouts  ******/</span>
+
+    CHOISIR_HAUTEUR,
+    CHOISIR_LARGEUR,
+    CHOISIR_POUR_GAGNER,
+
+    OUVRIR_MENU_PARAMETRES,
+    DEMARRER_PARTIE,
+
+    EFFACER_PARTIE_COURANTE,
+</pre></code></div>
+
+<h2 class="ng-scope">BONUS</h2>
+
+<h3 class="ng-scope">Ajouts à la classe <code>SourceDeDonnees</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/SourceDeDonnees.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SourceDeDonnees</span> </span>{
+
+    <span class="hljs-javadoc">/******* Ajout ********/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireSauvegarde</span><span class="hljs-params">(String cheminSauvegarde)</span></span>;
+</pre></code></div>
+
+<h3 class="ng-scope">Ajouts au <code>ControleurModele</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/ControleurModeles.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurModeles</span> </span>{
+
+    <span class="hljs-javadoc">/******** Ajouts aux méthodes ********/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireModele</span><span class="hljs-params">(String nomModele)</span>
+        <span class="hljs-comment">/*
+         * Détruire les sauvegardes
+         * Si le modèle est en mémoire
+         *     - oublier le modèle
+         *     - detruire l'observation
+         *     - oublier le modèle comme fournisseur (s'il y a lieu)
+         *
+         */</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireSauvegardes</span><span class="hljs-params">(String nomModele)</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Ajouts à la classe  <code>Action</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/Action.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Action</span> </span>{
+
+
+    <span class="hljs-javadoc">/******* Ajout *******/</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">siExecutable</span><span class="hljs-params">()</span>
+        <span class="hljs-comment">/*
+         * Appeler le ConroleurAction
+         *  pour savoir si l'action est exécutable
+         */</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Reconception du  <code>ListenerFournisseur</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/ListenerFournisseur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ListenerFournisseur</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">siExecutable</span><span class="hljs-params">(Object... args)</span>
+        <span class="hljs-comment">/*
+         * L'implantation par défaut retourne toujours vrai
+         *
+         */</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executer</span><span class="hljs-params">(Object... args)</span></span>;
+</pre></code></div>
+
+<h3 class="ng-scope">Ajouts au <code>ControleurAction</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/ControleurAction.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurAction</span> </span>{
+
+    <span class="hljs-javadoc">/********** Ajout aux méthodes *******/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">siActionExecutable</span><span class="hljs-params">(Action action)</span>
+        <span class="hljs-comment">/*
+         * Si le listener existe, demander au listener
+         *   si l'action est executable
+         */</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">oublierFournisseur</span><span class="hljs-params">(Fournisseur fournisseur)</span>
+        <span class="hljs-comment">/*
+         * Itérer les actions
+         *     - mettre le fournisseur à null s'il y a lieu
+         *
+         */</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Ajouts au <code>ControleurObservation</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/ControleurObservation.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurObservation</span> </span>{
+
+    <span class="hljs-javadoc">/******** Ajouts aux méthodes *********/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireObservation</span><span class="hljs-params">(Modele modele)</span>
+</span></pre></code></div></div></div></span></p>
+
+<h2 class="ng-scope">Remise</h2>
+
+<ol class="ng-scope">
+<li>Identifier votre dernier commit avec le Tag exact <code>atelier10</code></li>
+</ol>
+
+<!--
+## Théorie / procédures
+
+-->
+
+<!--
+
+<span src='/cegep/420-5B5-MO/theorie/android/android01' ng-controller='embed' embed></span>
+
+--></div><div id="procs"><div id="procs-cover" class="cover ng-scope" style="display:none" ng-click="hide_procs();"></div></div></div></body>

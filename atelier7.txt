@@ -1,0 +1,634 @@
+<body ng-controller="root" root="" class="ng-scope"><div class="root ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/07/" markdown=""><div class="markdown"><h1 class="ng-scope">Atelier 7: Jouer la partie</h1>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/07/objectifs_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/07/objectifs_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Objectifs</h2>
+
+<p class="ng-scope">À partir de l'application de l'Atelier #6:</p>
+
+<ol class="ng-scope">
+<li>Créer les modèles <code>MGrille</code> et <code>MColonne</code></li>
+<li>Créer l'énumération <code>GCouleur</code></li>
+<li>Créer un <code>ControleurAction</code> par lequel la vue va modifier le modèle
+<ul><li>(voir la section spécification pour les détails)</li></ul></li>
+<li>En utilisant les actions, ajouter le code pour jouer la partie:
+<center>
+<video width="500px" src="atelier07.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center></li>
+</ol></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/07/architecture_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/07/architecture_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Architecture de l'application</h2>
+
+<p class="ng-scope">IMPORANT: les schémas ci-bas sont <em>simplifiés</em>. Il ne faut <strong>pas</strong> s'en servir comme spécification</p>
+
+<h4 class="ng-scope">Scénario typique d'initialisation</h4>
+
+<p class="ng-scope"></p><center class="ng-scope">
+<img width="95%" style="background-color:white" src="architecture_atelier07_initialisation.svg">
+</center><p class="ng-scope"></p>
+
+<p class="ng-scope">NOTES:</p>
+
+<ul class="ng-scope">
+<li>Le schéma ne montre pas que l'Activité agit aussi comme fournisseur d'action</li>
+</ul>
+
+<h4 class="ng-scope">Scénario typique d'exécution d'une action</h4>
+
+<p class="ng-scope"></p><center class="ng-scope">
+<img width="95%" style="background-color:white" src="architecture_atelier07_executer_action.svg">
+</center><p class="ng-scope"></p>
+
+<p class="ng-scope">NOTES:</p>
+
+<ul class="ng-scope">
+<li>Le schéma ne montre pas la file d'attente des actions</li>
+<li>L'observation est lancée automatiquement par le contrôleur (<strong>après</strong> l'appel à <code>exécuter()</code>)</li>
+</ul>
+
+<h4 class="ng-scope">Vue: séquence typique d'exécution</h4>
+
+<ol class="ng-scope">
+<li>Construction</li>
+<li><code>onFinishInflate</code>
+<ol><li>récupérer les contrôles
+<ul><li>appel à <code>findViewById</code></li></ul></li>
+<li>initialiser les contrôles
+<ul><li>(p.ex. installer des <code>ArrayAdapter</code>)</li></ul></li>
+<li>affichage sans modèle
+<ul><li>(p.ex. ajuster les couleurs)</li></ul></li>
+<li><strong>demander les actions</strong>
+<ul><li>appel à <code>ControleurAction.demanderAction</code></li></ul></li>
+<li>installer les listeners sur les contrôles
+<ul><li>à l'intérieur d'un listener: exécuter l'<strong>action</strong> apropriée</li></ul></li>
+<li>observer le modèle 
+<ul><li>appel à <code>ControleurObservation.observerModele</code></li>
+<li>à l'intérieur du listener: afficher le modèle</li></ul></li></ol></li>
+</ol></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/07/specification_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/07/specification_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Spécification</h2>
+
+<ul class="ng-scope">
+<li><p>Vous <strong>devez avoir</strong>:</p>
+
+<ul><li>chaque <em>classe et interface</em>:
+<center>
+<img src="arborescence.png">
+</center></li>
+<li>chaque attribut ci-bas avec <strong>exactement</strong> le même type</li>
+<li>chaque méthode ci-bas avec <strong>exactement</strong> la même signature</li></ul></li>
+<li><p>Exception:</p>
+
+<ul><li>vous pouvez modifier/ajouter/ignorer des méthodes/attributs <code>private</code></li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Énumération <code>GCommande</code></h3>
+
+<ul class="ng-scope">
+<li>La liste des événements que notre contrôleur gère</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/GCommande.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> GCommande {
+
+    JOUER_COUP_ICI,
+</pre></code></div>
+
+<h3 class="ng-scope">Classe <code>Action</code></h3>
+
+<ul class="ng-scope">
+<li>Un objet <code>Action</code> représente l'exécution d'une commande</li>
+<li>Pour chaque action, on a:
+<ol><li>un <em>demandeur</em> d'action
+<ul><li>p.ex. une vue qui réagit quand l'usager choisit une nouvelle hauteur</li></ul></li>
+<li>un <em>fournisseur</em> d'action
+<ul><li>p.ex. un modèle où la nouvelle hauteur est stoquée</li>
+<li>p.ex. une activité où on va lancer une intention</li></ul></li></ol></li>
+<li>Représenter les actions avec des objets permet de:
+<ol><li>séparer les préoccupations:
+<ul><li>la demandeur ne sait pas où et comment l'action est implantée</li>
+<li>le fournisseur d'action ne sait pas d'où provient la demande</li></ul></li>
+<li>faciliter l'initialisation de l'application
+<ul><li>on demande l'action sans savoir si le fournisseur est créé</li></ul></li>
+<li>placer les actions en file d'attente et vérifier qu'il n'y a pas de doublons</li>
+<li>ajouter des arguments à l'action</li>
+<li>... autres bénéfices à discuter plus tard!</li></ol></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/Action.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Action</span> </span>{
+
+    Fournisseur fournisseur;
+
+    ListenerFournisseur listenerFournisseur;
+
+    Object[] args;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setArguments</span><span class="hljs-params">(Object... args)</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executerDesQuePossible</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-comment">/*
+         * Appeler le contrôleur. C'est au contrôleur 
+         * de gérer l'action (mettre en file d'attente,
+         * exécuter si possible, etc.)
+         *
+         */</span>
+
+    <span class="hljs-function">Action <span class="hljs-title">cloner</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-comment">/*
+         *
+         * Ne pas oublier de cloner le tableau!
+         *    (à moins qu'il soit null)
+         *
+         */</span>
+</pre></code></div>
+
+<h3 class="ng-scope">Interface <code>Fournisseur</code></h3>
+
+<ul class="ng-scope">
+<li>Identifie un objet capable de fournir une action</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/Fournisseur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Fournisseur</span> </span>{
+</pre></code></div>
+
+<h3 class="ng-scope">Interface <code>ListenerFournisseur</code></h3>
+
+<ul class="ng-scope">
+<li>Pour fournir une action, on doit créer un listener qui sera appelé au moment d'exécuter l'action:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/ListenerFournisseur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">ListenerFournisseur</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">executer</span><span class="hljs-params">(Object... args)</span></span>;
+</pre></code></div>
+
+<h3 class="ng-scope">Classe <code>ControleurAction</code></h3>
+
+<ul class="ng-scope">
+<li>Le <code>ControleurAction</code> sert à <em>créer</em> et <em>exécuter</em> les actions</li>
+<li>Pour créer une action, on va avoir:
+<ul><li>un demandeur qui appelle <code>demanderAction</code></li>
+<li>un fournisseur qui appelle <code>fournirAction</code></li></ul></li>
+<li>Pour exécuter une action on va:
+<ul><li>mettre l'action dans une file d'attente</li>
+<li>vérifier la présence du fournisseur avant de l'exécuter</li></ul></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/ControleurAction.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurAction</span> </span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Map&lt;GCommande, Action&gt; actions;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> List&lt;Action&gt; fileAttenteExecution;
+
+    <span class="hljs-keyword">static</span> {
+
+        <span class="hljs-comment">/* TRUC: initialiser le Map actions comme suit:
+        *          - pour chaque GCommande
+        *               - insérer une action vide
+        *
+        * (l'avantage est qu'ensuite on a plus à tester si
+        *  une GCommande est dans le Map... elles y sont toutes!)
+        */</span>
+
+    }
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Action <span class="hljs-title">demanderAction</span><span class="hljs-params">(GCommande commande)</span>
+        <span class="hljs-comment">/*
+         * Retourner l'action au demandeur
+         * 
+         */</span>
+
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">fournirAction</span><span class="hljs-params">(Fournisseur fournisseur, GCommande commande, ListenerFournisseur listenerFournisseur)</span>
+        <span class="hljs-comment">/*
+         * Enregistrer le fournisseur
+         * Appeler la méthode qui exécute chaque
+         *   action de la file d'attente (bonus: pourquoi?)
+         * 
+         */</span>
+
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executerDesQuePossible</span><span class="hljs-params">(Action action)</span>
+        <span class="hljs-comment">/*
+         * Mettre l'action en file d'attente
+         * Appeler la méthode qui exécute chaque
+         *   action de la file d'attente
+         *   
+         */</span>
+
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executerActionsExecutables</span><span class="hljs-params">()</span>
+        <span class="hljs-comment">/* 
+         * Itérer la file d'attente
+         *     Si l'action est exécutable:
+         * 
+         *         Avant d'exécuter l'action:
+         *             - l'enlever de la file d'attente
+         *       
+         *         Appeler la méthode pour exécuter l'action maintenant
+         *
+         *         Après avoir éxécuté l'action:
+         *             - lancer l'observation du fournisseur de cette action (si possible)
+         *
+         */</span>
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">siActionExecutable</span><span class="hljs-params">(Action action)</span>
+        <span class="hljs-comment">/*
+         * Une action est exécutable si:
+         *     - le listenerFournisseur n'est pas null
+         *
+         */</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executerMaintenant</span><span class="hljs-params">(Action action)</span>
+        <span class="hljs-comment">/*
+         * Appeler le listenerFournisseur de l'action
+         *
+         * BONUS: à quoi sert le synchronized?
+         *
+         */</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">lancerObservationSiApplicable</span><span class="hljs-params">(Action action)</span>
+        <span class="hljs-comment">/*
+         * Appeler le contrôleur pour lancer l'observation
+         *   du fournisseur (seulement si le fournisseur est un modèle)
+         *
+         */</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">enregistrerFournisseur</span><span class="hljs-params">(Fournisseur fournisseur, GCommande commande, ListenerFournisseur listenerFournisseur)</span>
+        <span class="hljs-comment">/*
+         * Enregistrer le fournisseur et le listenerFournisseur dans l'action
+         *
+         */</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ajouterActionEnFileDAttente</span><span class="hljs-params">(Action action)</span>
+        <span class="hljs-comment">/*
+         * Créer un clone de l'action et
+         *   ajouter le clone à la file d'attente
+         *
+         * BONUS: pourquoi un clone?
+         *
+         */</span>
+
+</span></pre></code></div>
+
+<h3 class="ng-scope">Ajout à la classe <code>ControleurObservation</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/ControleurObservation.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurObservation</span> </span>{
+
+    <span class="hljs-javadoc">/******* Ajouts aux méthodes ********/</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">lancerObservation</span><span class="hljs-params">(Modele modele)</span>
+        <span class="hljs-comment">/*
+         * Vérifier si le listener existe pour ce modele
+         * Appeler le listener
+         *
+         */</span>
+
+
+
+
+</span></pre></code></div>
+
+<h3 class="ng-scope">Exception <code>ErreurAction</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/ErreurAction.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ErreurAction</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">RuntimeException</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ErreurAction</span><span class="hljs-params">(String message)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">ErreurAction</span><span class="hljs-params">(Exception e)</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe <code>GCouleur</code></h3>
+
+<ul class="ng-scope">
+<li>Identifie la couleur des jetons</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/GCouleur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> GCouleur {
+
+    ROUGE,
+    JAUNE,
+</pre></code></div>
+
+<h3 class="ng-scope">Classe <code>MColonne</code></h3>
+
+<ul class="ng-scope">
+<li>Maintenant qu'on peut jouer des coups, on veut stoquer les jetons dans des colonnes</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/MColonne.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MColonne</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modele</span> </span>{
+
+    <span class="hljs-keyword">private</span> List&lt;GCouleur&gt; jetons;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MColonne</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> List&lt;GCouleur&gt; <span class="hljs-title">getJetons</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">placerJeton</span><span class="hljs-params">(GCouleur couleur)</span>
+
+    @Override
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">aPartirObjetJson</span><span class="hljs-params">(Map&lt;String, Object&gt; objetJson)</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+        <span class="hljs-comment">/*
+         * Inutilisé
+         *
+         */</span>
+
+    @Override
+    <span class="hljs-keyword">public</span> Map&lt;String, Object&gt; <span class="hljs-title">enObjetJson</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+        <span class="hljs-comment">/*
+         * Inutilisé
+         *
+         */</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe <code>MGrille</code></h3>
+
+<ul class="ng-scope">
+<li>La grille sur laquelle se joue la partie</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/MGrille.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MGrille</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modele</span> </span>{
+
+    <span class="hljs-keyword">private</span> List&lt;MColonne&gt; colonnes;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MGrille</span><span class="hljs-params">(<span class="hljs-keyword">int</span> largeur)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiserColonnes</span><span class="hljs-params">(<span class="hljs-keyword">int</span> largeur)</span>
+
+    <span class="hljs-keyword">public</span> List&lt;MColonne&gt; <span class="hljs-title">getColonnes</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">placerJeton</span><span class="hljs-params">(<span class="hljs-keyword">int</span> colonne, GCouleur couleur)</span>
+
+    @Override
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">aPartirObjetJson</span><span class="hljs-params">(Map&lt;String, Object&gt; objetJson)</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+        <span class="hljs-comment">/*
+         * Inutilisé
+         *
+         */</span>
+
+    @Override
+    <span class="hljs-keyword">public</span> Map&lt;String, Object&gt; <span class="hljs-title">enObjetJson</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+        <span class="hljs-comment">/*
+         * Inutilisé
+         *
+         */</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Ajouts à la classe <code>MPartie</code></h3>
+
+<ul class="ng-scope">
+<li>Dans la classe <code>MPartie</code>, on doit fournir l'action <code>JOUER_COUP_ICI</code> dès que possible</li>
+<li>Quand cette action est exécutée, on doit placer un jeton dans la grille</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/MPartie.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MPartie</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modele</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Fournisseur</span> </span>{
+
+    <span class="hljs-javadoc">/******** Ajouts aux attributs ********/</span>
+
+    <span class="hljs-keyword">private</span> MGrille grille;
+    <span class="hljs-keyword">private</span> GCouleur couleurCourante;
+
+
+    <span class="hljs-javadoc">/******** Ajouts aux méthodes ********/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> MGrille <span class="hljs-title">getGrille</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiserCouleurCourante</span><span class="hljs-params">()</span>
+
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">fournirActionPlacerJeton</span><span class="hljs-params">()</span>
+        <span class="hljs-comment">/*
+         * Appeler fournirAction
+         *
+         */</span>
+
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">jouerCoup</span><span class="hljs-params">(<span class="hljs-keyword">int</span> colonne)</span>
+        <span class="hljs-comment">/*
+         *
+         *
+         */</span>
+
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">prochaineCouleurCourante</span><span class="hljs-params">()</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Ajouts à la classe <code>VPartie</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/VPartie.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VPartie</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Vue</span> </span>{
+
+    <span class="hljs-javadoc">/****** Ajouts aux méthodes *****/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">observerPartie</span><span class="hljs-params">()</span>
+        <span class="hljs-comment">/*
+         * Dans reagirChangementAuModele,
+         *   on veut rafraîchir la grille
+         *
+         */</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">miseAJourGrille</span><span class="hljs-params">(MPartie partie)</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Ajouts à la classe <code>VGrille</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/VGrille.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VGrille</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">GridLayout</span> </span>{
+
+    <span class="hljs-comment">// mémoriser les VCase ajoutés (avec un tableau à deux dimensions)</span>
+    <span class="hljs-keyword">private</span> VCase[][] lesCases;
+
+    <span class="hljs-javadoc">/******** Ajouts aux méthodes *********/</span>
+
+    <span class="hljs-comment">// mémoriser les VCases avec un tableau</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiserTableauDeCases</span><span class="hljs-params">(<span class="hljs-keyword">int</span> hauteur, <span class="hljs-keyword">int</span> largeur)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">demanderActionEntete</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-comment">/*
+         * On demande l'action JOUER_COUP_ICI
+         *
+         * L'action est à exécuter quand l'usager
+         *   clique sur un en-tête
+         */</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ajouterEnTetes</span><span class="hljs-params">(<span class="hljs-keyword">int</span> largeur)</span></span>{
+        <span class="hljs-comment">/*
+         * Pour chaque en-tête, on veut
+         *   installer le Listener
+         */</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">installerListenerEntete</span><span class="hljs-params">(VEntete entete, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> colonne)</span>
+
+    <span class="hljs-keyword">void</span> <span class="hljs-title">afficherJetons</span><span class="hljs-params">(MGrille grille)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">afficherJeton</span><span class="hljs-params">(<span class="hljs-keyword">int</span> colonne, <span class="hljs-keyword">int</span> rangee, GCouleur jeton)</span>
+</span></pre></code></div>
+
+<h4 class="ng-scope">NOTE</h4>
+
+<ul class="ng-scope">
+<li>On veut installer un listener sur chaque en-tête</li>
+<li>Le listener va demander l'exécution de l'action <code>JOUER_COUP_ICI</code>
+<ul><li>(l'argument de l'action doit réfléter la colonne)</li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Ajouts à la classe <code>VCase</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/07/java/VCase.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VCase</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AppCompatButton</span> </span>{
+
+    <span class="hljs-javadoc">/********* Ajouts aux méthodes *********/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">afficherJeton</span><span class="hljs-params">(GCouleur jeton)</span>
+        <span class="hljs-comment">/*
+         * Changer la couleur de fond selon
+         *   le jeton à afficher
+         *
+         */</span>
+</span></pre></code></div></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/07/etapes_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/07/etapes_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Étapes de réalisation suggérées</h2>
+
+<h3 class="ng-scope">Étape 1) Spécification minimale</h3>
+
+<ul class="ng-scope">
+<li>Créer chaque classe (interface, etc.)</li>
+<li>Ajouter chaque attribut (avec la bonne signature)</li>
+<li>Ajouter chaque méthode (avec la bonne signature)</li>
+</ul>
+
+<h3 class="ng-scope">Étape 2) Une action pour les en-têtes</h3>
+
+<ul class="ng-scope">
+<li>Dans <code>VGrille</code>:
+<ul><li>demander l'action <code>JOUER_COUP_ICI</code></li>
+<li>installer un listener pour chaque bouton en-tête</li>
+<li>dans le listener:
+<ul><li>ajouter le numéro de colonne comme argument à l'action</li>
+<li>exécuter l'action</li></ul></li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Étape 3) Afficher dans le Log que le modèle exécute l'action</h3>
+
+<ul class="ng-scope">
+<li>S'assurer que le modèle exécute l'action en affichant dans le Log</li>
+<li>Voici un aperçu de la trace d'exécution:
+<ul><li><code>VGrille$1.onClick</code></li>
+<li><code>Action.executerDesQuePossible</code></li>
+<li><code>ControleurAction.executerDesQuePossible</code></li>
+<li><code>ControleurAction.executerActionsExecutables</code></li>
+<li><code>ControleurAction.executerMaintenant</code></li>
+<li><code>MPartie$1.executer</code></li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Étape 4) Jouer le coup</h3>
+
+<ul class="ng-scope">
+<li>Dans <code>MPartie$1.executer</code> récupérer le numéro de colonne</li>
+<li>Appeler <code>jouerCoup</code></li>
+<li>Ajouter le code qui insère un jeton dans la grille</li>
+</ul>
+
+<h3 class="ng-scope">Étape 5) Afficher dans le Log que la vue est avertie du changement</h3>
+
+<ul class="ng-scope">
+<li>S'assurer que <code>VPartie</code> est avertie du changement au modèle via l'observation</li>
+<li>Voici un aperçu de la trace d'exécution:
+<ul><li><code>VGrille$1.onClick</code></li>
+<li><code>Action.executerDesQuePossible</code></li>
+<li><code>ControleurAction.executerDesQuePossible</code></li>
+<li><code>ControleurAction.executerActionsExecutables</code></li>
+<li><code>ControleurAction.lancerObservationSiApplicable</code></li>
+<li><code>ControleurObservation.lancerObservation</code></li>
+<li><code>VPartie$1.reagirChangementAuModele</code></li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Étape 6) Afficher les jetons</h3>
+
+<ul class="ng-scope">
+<li>Dans <code>VPartie$1.reagirChangementAuModele</code> appeler <code>miseAJourGrille</code></li>
+<li>Ajouter le code pour afficher les jetons de la grille</li>
+</ul></div></div></span></p>
+
+<h2 class="ng-scope">Remise</h2>
+
+<ol class="ng-scope">
+<li>Identifier votre dernier commit avec le Tag exact <code>atelier07</code></li>
+</ol>
+
+<h2 class="ng-scope">Théorie / procédures</h2>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/theorie/patrons/patrons02" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/patrons/patrons02" markdown=""><div class="markdown"><h3 class="ng-scope">MVC: modèle-vue-contrôleur</h3>
+
+<p class="ng-scope">Sans doute le patron de conception le mieux connu.
+C'est un excellent exemple du concept de <em>séparation des préoccupations</em> (<em>separation of concerns</em>).</p>
+
+<p class="ng-scope">L'idée est de séparer les responsabilités:</p>
+
+<ul class="ng-scope">
+<li>Modèle: les données et la logique <strong>du domaine</strong>
+<ul><li>p.ex: la partie et les règles du jeu</li></ul></li>
+<li>Contrôleur: la logique interne <strong>du programme</strong>
+<ul><li>p.ex: quand et comment charger les modèles</li>
+<li>p.ex: quand mettre à jour les vues</li></ul></li>
+<li>Vue: affiche un modèle et reçoit les événements de l'usager</li>
+</ul>
+
+<p class="ng-scope">Le MVC est aussi un bon exemple du principe <em>ne pas se répéter</em> (<em>DRY: don't repeat youself</em>), p.ex:</p>
+
+<ul class="ng-scope">
+<li>Le contrôleur peut appliquer le même code de chargement de modèle à tous les modèles</li>
+<li>Plusieurs vues peuvent afficher le même modèle
+<ul><li>p.ex. affichage de la partie complète (avec l'historique des coups) Vs affichage de seulement la grille de jeu</li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Application asynchrone</h3>
+
+<p class="ng-scope">Une application Android est fortement asynchrone. C'est-à-dire que la séquence exacte des événements importants n'est pas connue d'avance.</p>
+
+<p class="ng-scope">Par exemple:</p>
+
+<ul class="ng-scope">
+<li>Les activités sont constamment créées, mises en pause, détruites, etc.</li>
+<li>La vue n'existe pas au début de l'activité, elle est créée plus tard</li>
+<li>Même si on commence à charger le modèle à la création de l'activité, il n'existera pas nécessairement au moment où la vue sera créée
+<ul><li>p.ex. le modèle sera chargé très rapidement s'il provient de la sauvegarde temporaire (<code>savedInstanceState</code>)</li>
+<li>par contre, il sera chargé beaucoup plus tard s'il provient du serveur</li></ul></li>
+</ul>
+
+<p class="ng-scope">En conséquence, on va structurer le code de façon à supporter de multiples séquences d'initialisation.</p>
+
+<p class="ng-scope">En particulier, on veut supporter les deux cas suivants:</p>
+
+<ul class="ng-scope">
+<li>Lorsque la vue est créée d'abord et le modèle ensuite</li>
+<li>À l'inverse, lorsque le modèle est créé d'abord et la vue ensuite</li>
+</ul>
+
+<h3 class="ng-scope">Action: exécuter dès que possible</h3>
+
+<h4 class="ng-scope">Dans la vue</h4>
+
+<p class="ng-scope">Dans la vue, on demande à exécuter une action:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="1" last_line="6" extension="java" file=""><code class="hljs java"><pre>Action actionHauteur = ControleurAction.demanderAction(GCommande.CHOISIR_HAUTEUR);
+
+<span class="hljs-comment">// Une fois qu'on connais le choix de l'usager</span>
+actionHauteur.setArguments(leChoix);
+actionHauteur.executerDesQuePossible();
+</pre></code></div>
+
+<p class="ng-scope">L'action sera exécutée dès que possible, p.ex. dès que le modèle existe pour l'exécuter.</p>
+
+<h4 class="ng-scope">Dans le modèle</h4>
+
+<p class="ng-scope">À l'inverse, dans le modèle, on fournit une action:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="7" last_line="16" extension="java" file=""><code class="hljs java"><pre>ControleurAction.fournirAction(<span class="hljs-keyword">this</span>,
+        GCommande.CHOISIR_HAUTEUR,
+        <span class="hljs-keyword">new</span> ListenerFournisseur() {
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executer</span><span class="hljs-params">(Object... args)</span> </span>{
+    
+                setHauteur((<span class="hljs-keyword">int</span>) args[<span class="hljs-number">0</span>]);
+            }
+
+        });</pre></code></div>
+
+<p class="ng-scope">On peut fournir l'action même si la vue qui la demandera n'existe pas encore.</p></div></div></span></p></div><div id="procs"><div id="procs-cover" class="cover ng-scope" style="display:none" ng-click="hide_procs();"></div></div></div></body>

@@ -1,0 +1,76 @@
+# Objectifs
+
+    {
+      "parametres": {
+        "largeur": "7",
+        "pourGagner": "4",
+        "hauteur": "6"
+      },
+      "coups": [
+        "4",
+        "4",
+        "3",
+        "2",
+        "1",
+        "1",
+        "2",
+        "5",
+        "6",
+        "2",
+        "1",
+        "0",
+        "0",
+        "0"
+      ]
+    }
+
+---------------
+# Modification à la classe ControleurObservation
+
+public class ControleurObservation {
+
+
+    /******** Modifications aux attributs ************/
+
+    // On change l'attribut à public pour faciliter la sauvegarde
+    public static MPartie partie;
+
+---------------
+# Ajouts à la classe MPartie
+
+public class MPartie extends Modele implements Fournisseur {
+
+    /******** Ajouts aux attributs ********/
+
+    @AttributSerialisable
+    public List<Integer> coups;
+    private final String __coups = "coups";
+
+
+    /******** Ajouts aux méthodes ********/
+
+    @Override
+    public void aPartirObjetJson(Map<String, Object> objetJson) throws ErreurSerialisation
+        /*
+         * ATTENTION: lire les parametresPartie d'abord
+         *
+         * - initialiser la grille
+         *
+         * - initialiser la couleur courante
+         *
+         * - lire la liste de coup
+         *
+         * - rejouer les coups
+         *
+         */
+
+    @Override
+    public Map<String, Object> enObjetJson() throws ErreurSerialisation
+
+    private void rejouerLesCoups(List<Integer> coupsARejouer)
+
+    private List<Integer> listeCoupsAPartirJson(List<String> listeCoupsObjetJson)
+
+    private List<String> listeCoupsEnObjetJson(List<Integer> listeCoups)
+
+---------------

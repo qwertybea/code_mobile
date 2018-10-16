@@ -1,0 +1,334 @@
+# Classe ControleurObservation
+
+public class ControleurObservation {
+
+    private static Map<Modele, ListenerObservateur> observations;
+
+    // FIXME: c'est temporaire, on va écrire un contrôleur de modèles à l'atelier09
+    private static MPartie partie;
+
+    static {
+
+    }
+
+
+    public static void observerModele(String nomModele, final ListenerObservateur listenerObservateur)
+        /*
+         * Enregistrer le listener dans le Map observations
+         * Lancer l'observation une première fois quand on reçoit le listener
+         *
+         * Pour l'instant, utiliser le nom pour décider quel modèle utiliser
+         *     - MParametres.instance ou ControleurObservation.partie
+         *
+         * À l'atelier09 on va écrire ControleurModeles pour gérer les modèles
+         *
+         * BONUS: pourquoi le modèle est identifié par son nom? (et pas son objet comme dans le Map?)
+         *
+         */
+
+---------------
+# Interface ListenerObservateur
+
+public abstract class ListenerObservateur {
+
+    public void reagirNouveauModele(Modele modele)
+        /*
+         * L'implantation par défaut est d'appeler reagirChangementAuModele
+         *
+         */
+
+    public abstract void reagirChangementAuModele(Modele modele);
+
+---------------
+# Exception ErreurObservation
+
+public class ErreurObservation extends RuntimeException {
+
+    public ErreurObservation(Exception e)
+
+    public ErreurObservation(String message)
+
+---------------
+# Classe MParametresPartie
+
+public class MParametresPartie extends Modele {
+
+    @AttributSerialisable
+    public Integer hauteur;
+    protected final String __hauteur = "hauteur";
+
+    @AttributSerialisable
+    public Integer largeur;
+    protected final String __largeur = "largeur";
+
+    @AttributSerialisable
+    public Integer pourGagner;
+    protected final String __pourGagner = "pourGagner";
+
+
+    public static MParametresPartie aPartirMParametres(MParametres mParametres)
+        /*
+         * Retourne une instance de MParametresPartie avec 
+         *   exactement les mêmes hauteur/largeur/pourGagner
+         *   que mParametres reçu en argument
+         *
+         */
+
+    public MParametresPartie()
+
+    public Integer getHauteur()
+
+    public Integer getLargeur()
+
+    public Integer getPourGagner()
+
+    public void setHauteur(int hauteur)
+
+    public void setLargeur(int largeur)
+
+    public void setPourGagner(int pourGagner)
+
+    @Overrid
+    public void aPartirObjetJson(Map<String, Object> objetJson) throws ErreurSerialisation
+
+    @Override
+    public Map<String, Object> enObjetJson() throws ErreurSerialisation
+
+---------------
+# Classe MParametres
+
+public class MParametres extends Modele {
+
+    // FIXME: c'est temporaire. On va écrire un ControleurModeles à l'atelier09
+    public static MParametres instance = new MParametres();
+
+    @AttributSerialisable
+    public MParametresPartie parametresPartie;
+    private String __parametresPartie = "parametresPartie";
+
+    private List<Integer> choixHauteur;
+    private List<Integer> choixLargeur;
+    private List<Integer> choixPourGagner;
+
+    public MParametres()
+
+    public List<Integer> getChoixHauteur()
+
+    public List<Integer> getChoixLargeur()
+
+    public List<Integer> getChoixPourGagner()
+
+    public MParametresPartie getParametresPartie()
+
+    private void genererListesDeChoix()
+
+    private List<Integer> genererListeChoix(int min, int max)
+
+    private void genererListeChoixHauteur()
+
+    private void genererListeChoixLargeur()
+
+    private void genererListeChoixPourGagner()
+
+    @Override
+    public void aPartirObjetJson(Map<String, Object> objetJson) throws ErreurSerialisation
+
+    @Override
+    public Map<String, Object> enObjetJson() throws ErreurSerialisation
+
+---------------
+# Classe MPartie
+
+public class MPartie extends Modele {
+
+    @AttributSerialisable
+    public MParametresPartie parametres;
+    private final String __parametres = "parametres";
+
+
+    public MPartie(MParametresPartie parametres)
+
+    public MParametresPartie getParametres()
+
+
+    @Override
+    public void aPartirObjetJson(Map<String, Object> objetJson) throws ErreurSerialisation
+        /*
+         * Inutilisé pour l'instant
+         *
+         */
+
+    @Override
+    public Map<String, Object> enObjetJson() throws ErreurSerialisation
+        /*
+         * Inutilisé pour l'instant
+         *
+         */
+
+---------------
+# Classe VPartie
+
+public class VPartie extends Vue {
+
+    private VGrille grille;
+
+
+    public VPartie(Context context)
+
+    public VPartie(Context context, AttributeSet attrs)
+
+    public VPartie(Context context, AttributeSet attrs, int defStyleAttr)
+
+
+    @Override
+    protected void onFinishInflate()
+
+    private void initialiser()
+
+    private void observerPartie()
+        /*
+         * Appeler observer pour obtenir le modèle
+         *
+         * Une fois le modèle obtenu, créer la grille d'affichage
+         *
+         */
+
+    private MPartie getPartie(Modele modele)
+
+    private void initialiserGrille(MPartie partie)
+
+---------------
+# Classe VGrille
+
+public class VGrille extends GridLayout {
+
+    public VGrille(Context context)
+
+    public VGrille(Context context, AttributeSet attrs)
+
+    public VGrille(Context context, AttributeSet attrs, int defStyleAttr)
+
+    private int nombreRangees;
+
+    private class Colonne extends ArrayList<VCase> {}
+
+    private List<Colonne> colonnesDeCases;
+
+    private List<VEntete> entetes;
+
+    @Override
+    protected void onFinishInflate()
+
+    private void initialiser()
+
+    void creerGrille(int hauteur, int largeur)
+
+    private void initialiserColonnes(int largeur)
+
+    private void ajouterEnTetes(int largeur)
+
+    private LayoutParams getMiseEnPageEntete(int colonne)
+
+    private void ajouterCases(int hauteur, int largeur)
+
+    private LayoutParams getMiseEnPageCase(int rangee, int colonne)
+
+---------------
+# Classe VEntete
+
+public class VEntete extends AppCompatButton {
+
+    public VEntete(Context context)
+
+    public VEntete(Context context, AttributeSet attrs)
+
+    public VEntete(Context context, AttributeSet attrs, int defStyleAttr)
+
+    private int colonne;
+
+    public VEntete(Context context, int colonne) {
+        /*
+         * Afficher le numéro de colonne!
+         *
+         */
+
+---------------
+# Classe VCase
+
+public class VCase extends AppCompatButton {
+
+    public VCase(Context context)
+
+    public VCase(Context context, AttributeSet attrs)
+
+    public VCase(Context context, AttributeSet attrs, int defStyleAttr)
+
+
+    public VCase(Context context, int rangee, int colonne)
+        /*
+         * Afficher la rangée et la colonne
+         *
+         * Changer la couleur de fond si désiré
+         *
+         */
+
+    private void initialiser()
+
+---------------
+# Observateur: réagir au changement
+
+ControleurObservation.observerModele(MParametres.class.getSimpleName(),
+        new ListenerObservateur() {
+
+            @Override
+            public void reagirChangementAuModele(Modele modele) {
+
+                afficherParametres((MParametres) modele);
+            }
+        });
+---------------
+# Listener: promesse d'exécution
+
+ControleurObservation.observerModele(MParametres.class.getSimpleName(),
+
+        // Quand ça sera le temps, je promets d'observer le modèle
+        new ListenerObservateur() {
+
+            @Override
+            public void reagirChangementAuModele(Modele modele) {
+
+                afficherParametres((MParametres) modele);
+            }
+        });
+---------------
+// Le modèle a changé, c'est le temps d'observer!
+listenerObservateur.reagirChangementAuModele(modele);
+---------------
+# GridLayout
+
+int colonne = //
+int rangee = //
+
+float poidsColonne = //
+float poidsRangee = //
+
+Spec specRangee = GridLayout.spec(rangee, poidsColonne);
+Spec specColonne = GridLayout.spec(colonne, poidsRangee);
+
+LayoutParams mesParams = new LayoutParams(specRangee, specColonne);
+---------------
+# GridLayout: options supplémentaire du LayoutParams
+
+mesParams.width = 0;
+mesParams.height = 0;
+mesParams.setGravity(Gravity.FILL);
+---------------
+mesParams.rightMargin = 5;
+mesParams.leftMargin = 5;
+---------------
+# GridLayout: ajouter un contrôle
+
+GridLayout grille = //
+
+grille.addView(monControle, mesParams);
+---------------

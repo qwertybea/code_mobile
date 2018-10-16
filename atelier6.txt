@@ -1,0 +1,395 @@
+<body ng-controller="root" root="" class="ng-scope"><div class="root ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/06/" markdown=""><div class="markdown"><h1 class="ng-scope">Atelier 6: Contrôleurs (partie 01)</h1>
+
+<h3 class="ng-scope">IMPORTANT</h3>
+
+<p class="ng-scope">Si vous n'aviez pas complété les ateliers 1-5, vous devez utiliser le corrigé: <a href="http://ciboulot.ca/cegep/420-5B5-MO/ateliers/partie01/corrige">http://ciboulot.ca/cegep/420-5B5-MO/ateliers/partie01/corrige</a></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/06/objectifs_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/06/objectifs_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Objectifs</h2>
+
+<p class="ng-scope">À partir de l'application de l'Atelier #5:</p>
+
+<ol class="ng-scope">
+<li>Créer les contrôleurs <code>ControleurAction</code> et <code>ControleurObservation</code>
+<ul><li>(voir la section spécification pour les détails)
+<center>
+<img src="arborescence.png">
+</center></li></ul></li>
+<li><p>Reconception du code:</p>
+
+<ol><li>La transition de <code>AMenuPrincipal</code> à <code>AParametres</code> doit se faire dans une <code>Action</code></li>
+<li>Chaque choix de paramètres doit se faire dans une <code>Action</code></li>
+<li>La vue <code>VParametres</code> doit utiliser <code>observerModele</code> pour la mise à jour</li>
+<li>Dans <code>MParametres</code>, le <code>pourGagner</code> maximum doit maintenant être calculé:
+<ul><li><code>pourGagnerMax = max(hauteur, largeur) * 75 / 100</code></li></ul></li></ol></li>
+<li><p>Mise à jour «en direct» de la liste de choix de <code>pourGagner</code>:</p>
+
+<ul><li>(note: le <code>pourGagner</code> est aussi ajusté lorsque trop haut pour le max)
+<center>
+<video width="250px" src="atelier06.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center></li></ul></li>
+</ol></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/06/specification_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/06/specification_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Spécification</h2>
+
+<ul class="ng-scope">
+<li><p>Vous <strong>devez avoir</strong>:</p>
+
+<ul><li>chaque <em>classe et interface</em> de l'objectif</li>
+<li>chaque attribut ci-bas avec <strong>exactement</strong> le même type</li>
+<li>chaque méthode ci-bas avec <strong>exactement</strong> la même signature</li></ul></li>
+<li><p>Exception:</p>
+
+<ul><li>vous pouvez modifier/ajouter/ignorer des méthodes/attributs <code>private</code></li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Énumération <code>GCommande</code></h3>
+
+<ul class="ng-scope">
+<li>La liste des événements que notre contrôleur gère</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/GCommande.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> GCommande {
+
+    CHOISIR_HAUTEUR,
+    CHOISIR_LARGEUR,
+    CHOISIR_POUR_GAGNER,
+
+    OUVRIR_MENU_PARAMETRES,
+</pre></code></div>
+
+<h3 class="ng-scope">Classe <code>Action</code></h3>
+
+<ul class="ng-scope">
+<li>Un objet <code>Action</code> représente l'exécution d'une commande</li>
+<li>Pour chaque action, on a:
+<ol><li>un <em>demandeur</em> d'action
+<ul><li>p.ex. une vue qui réagit quand l'usager choisit une nouvelle hauteur</li></ul></li>
+<li>un <em>fournisseur</em> d'action
+<ul><li>p.ex. un modèle où la nouvelle hauteur est stoquée</li>
+<li>p.ex. une activité où on va lancer une intention</li></ul></li></ol></li>
+<li>Représenter les actions avec des objets permet de:
+<ol><li>séparer les préoccupations:
+<ul><li>la demandeur ne sait pas où et comment l'action est implantée</li>
+<li>le fournisseur d'action ne sait pas d'où provient la demande</li></ul></li>
+<li>faciliter l'initialisation de l'application
+<ul><li>on demande l'action sans savoir si le fournisseur est créé</li></ul></li>
+<li>placer les actions en file d'attente et vérifier qu'il n'y a pas de doublons</li>
+<li>ajouter des arguments à l'action</li>
+<li>... autres bénéfices à discuter plus tard!</li></ol></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/Action.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Action</span> </span>{
+
+    Fournisseur fournisseur;
+
+    ListenerFournisseur listenerFournisseur;
+
+    Object[] args;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setArguments</span><span class="hljs-params">(Object... args)</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executerDesQuePossible</span><span class="hljs-params">()</span></span>{
+</pre></code></div>
+
+<h3 class="ng-scope">Interface <code>Fournisseur</code></h3>
+
+<ul class="ng-scope">
+<li>Identifie un objet capable de fournir une action</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/Fournisseur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Fournisseur</span> </span>{
+</pre></code></div>
+
+<h3 class="ng-scope">Interface <code>ListenerFournisseur</code></h3>
+
+<ul class="ng-scope">
+<li>Pour fournir une action, on doit créer un listener qui sera appelé au moment d'exécuter l'action:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ListenerFournisseur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">ListenerFournisseur</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">executer</span><span class="hljs-params">(Object... args)</span></span>;
+</pre></code></div>
+
+<h3 class="ng-scope">Classe <code>ControleurAction</code></h3>
+
+<ul class="ng-scope">
+<li>Le <code>ControleurAction</code> sert à <em>créer</em> et <em>exécuter</em> les actions</li>
+<li>Pour créer une action, on va avoir:
+<ul><li>un demandeur qui appelle <code>demanderAction</code></li>
+<li>un fournisseur qui appelle <code>fournirAction</code></li></ul></li>
+<li>Pour exécuter une action on va:
+<ul><li>mettre l'action dans une file d'attente</li>
+<li>vérifier la présence du fournisseur avant de l'exécuter</li></ul></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ControleurAction.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurAction</span> </span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Map&lt;GCommande, Action&gt; actions;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Set&lt;Action&gt; fileAttenteExecution;
+
+    <span class="hljs-keyword">static</span> {
+
+        <span class="hljs-comment">/* TRUC: initialiser le Map actions comme suit:
+        *          - pour chaque GCommande
+        *               - insérer une action vide
+        *
+        * (l'avantage est qu'ensuite on a plus à tester si
+        *  une GCommande est dans le Map... elles y sont toutes!)
+        */</span>
+
+
+        <span class="hljs-comment">/* BONUS: pour le Set fileAttenteExecution, il existe 
+        *        une implémentation de Set qui préserve l'ordre 
+        *        d'insertion... c'est celle-là qu'on veut! 
+        * 
+        * (double bonus: pourquoi?)
+        */</span>
+    }
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Action <span class="hljs-title">demanderAction</span><span class="hljs-params">(GCommande commande)</span>
+
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">fournirAction</span><span class="hljs-params">(Fournisseur fournisseur, GCommande commande, ListenerFournisseur listenerFournisseur)</span>
+        <span class="hljs-comment">/*
+         * En plus d'enregistrer le fournisseur
+         * On doit vérifier si l'ajout du fournisseur a rendu une action en file d'attente exécutable
+         * 
+         */</span>
+
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executerDesQuePossible</span><span class="hljs-params">(Action action)</span>
+
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executerActionsExecutables</span><span class="hljs-params">()</span>
+        <span class="hljs-comment">/* 
+         * Avant d'exécuter l'action:
+         *     - l'enlever de la file d'attente
+         *
+         * Après avoir éxécuté l'action:
+         *     - lancer l'observation du fournisseur de cette action (si possible)
+         *
+         */</span>
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">siActionExecutable</span><span class="hljs-params">(Action action)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">lancerObservationSiApplicable</span><span class="hljs-params">(Action action)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executerMaintenant</span><span class="hljs-params">(Action action)</span>
+        <span class="hljs-comment">/*
+         * BONUS: à quoi sert le synchronized?
+         *
+         */</span>
+
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">enregistrerFournisseur</span><span class="hljs-params">(Fournisseur fournisseur, GCommande commande, ListenerFournisseur listenerFournisseur)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ajouterActionEnFileDAttente</span><span class="hljs-params">(Action action)</span>
+
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe <code>ControleurObservation</code></h3>
+
+<ul class="ng-scope">
+<li>Le <code>ControleurObservation</code> gère la mise-à-jour des vues quand le modèle change</li>
+<li>La vue s'enregistre en appelant <code>observerModele</code> et en fournissant un listener
+<ul><li>(quand le modèle change, le contrôleur appèle ce listener)</li></ul></li>
+<li>Le <code>ControleurAction</code> et le <code>ControleurObservation</code> travaillent ensemble:
+<ul><li>quand une action affecte un modèle, l'observation est lancée sur ce modèle</li></ul></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ControleurObservation.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurObservation</span> </span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Map&lt;Modele, ListenerObservateur&gt; observations;
+
+    <span class="hljs-keyword">static</span> {
+
+    }
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">observerModele</span><span class="hljs-params">(String nomModele, <span class="hljs-keyword">final</span> ListenerObservateur listenerObservateur)</span>
+        <span class="hljs-comment">/*
+         *   - on enregistre le listener dans le Map observations
+         *   - on lance l'observation une première fois quand on reçoit le listener
+         *
+         *   Note: pour l'instant il y a un seul modèle, le nomModele est ignoré (FIXME atelier07!)
+         *
+         *   BONUS: pourquoi le modèle est identifié par son nom? (et pas son objet comme dans le Map?)
+         *
+         */</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">lancerObservation</span><span class="hljs-params">(Modele modele)</span>
+        <span class="hljs-comment">/*
+         * sera appelé par le ControleurAction après une action!
+         *
+         */</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Interface <code>ListenerObservateur</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ListenerObservateur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">ListenerObservateur</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">reagirChangementAuModele</span><span class="hljs-params">(Modele modele)</span></span>;
+</pre></code></div>
+
+<h3 class="ng-scope">Exception <code>ErreurAction</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ErreurAction.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ErreurAction</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">RuntimeException</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ErreurAction</span><span class="hljs-params">(String message)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">ErreurAction</span><span class="hljs-params">(Exception e)</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Exception <code>ErreurObservation</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ErreurObservation.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ErreurObservation</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">RuntimeException</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ErreurObservation</span><span class="hljs-params">(Exception e)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">ErreurObservation</span><span class="hljs-params">(String message)</span>
+</span></pre></code></div></div></div></span></p>
+
+<h2 class="ng-scope">Remise</h2>
+
+<ol class="ng-scope">
+<li>Identifier votre dernier commit avec le Tag exact <code>atelier06</code></li>
+<li>Remettre votre dernier commit sur Moodle, <code>REMISE: atelier#6</code></li>
+</ol>
+
+<h2 class="ng-scope">Théorie / procédures</h2>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/theorie/patrons/partie01" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/patrons/partie01" markdown=""><div class="markdown"><h1 class="ng-scope">Théorie: patrons de conception</h1>
+
+<h2 class="ng-scope">Partie 01</h2>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/theorie/patrons/patrons01" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/patrons/patrons01" markdown=""><div class="markdown"><h3 class="ng-scope">MVC: modèle-vue-contrôleur</h3>
+
+<p class="ng-scope">Sans doute le patron de conception le mieux connu.
+C'est un excellent exemple du concept de <em>séparation des préoccupations</em> (<em>separation of concerns</em>).</p>
+
+<p class="ng-scope">L'idée est de séparer les responsabilités:</p>
+
+<ul class="ng-scope">
+<li>Modèle: les données et la logique <strong>du domaine</strong>
+<ul><li>p.ex: la partie et les règles du jeu</li></ul></li>
+<li>Contrôleur: la logique interne <strong>du programme</strong>
+<ul><li>p.ex: quand et comment charger les modèles</li>
+<li>p.ex: quand mettre à jour les vues</li></ul></li>
+<li>Vue: affiche un modèle et reçoit les événements de l'usager</li>
+</ul>
+
+<p class="ng-scope">Le MVC est aussi un bon exemple du principe <em>ne pas se répéter</em> (<em>DRY: don't repeat youself</em>), p.ex:</p>
+
+<ul class="ng-scope">
+<li>Le contrôleur peut appliquer le même code de chargement de modèle à tous les modèles</li>
+<li>Plusieurs vues peuvent afficher le même modèle
+<ul><li>p.ex. affichage de la partie complète (avec l'historique des coups) Vs affichage de seulement la grille de jeu</li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Application asynchrone</h3>
+
+<p class="ng-scope">Une application Android est fortement asynchrone. C'est-à-dire que la séquence exacte des événements importants n'est pas connue d'avance.</p>
+
+<p class="ng-scope">Par exemple:</p>
+
+<ul class="ng-scope">
+<li>Les activités sont constamment créées, mises en pause, détruites, etc.</li>
+<li>La vue n'existe pas au début de l'activité, elle est créée plus tard</li>
+<li>Même si on commence à charger le modèle à la création de l'activité, il n'existera pas nécessairement au moment où la vue sera créée
+<ul><li>p.ex. le modèle sera chargé très rapidement s'il provient de la sauvegarde temporaire (<code>savedInstanceState</code>)</li>
+<li>par contre, il sera chargé beaucoup plus tard s'il provient du serveur</li></ul></li>
+</ul>
+
+<p class="ng-scope">En conséquence, on va structurer le code de façon à supporter de multiples séquences d'initialisation.</p>
+
+<p class="ng-scope">En particulier, on veut supporter les deux cas suivants:</p>
+
+<ul class="ng-scope">
+<li>Lorsque la vue est créée d'abord et le modèle ensuite</li>
+<li>À l'inverse, lorsque le modèle est créé d'abord et la vue ensuite</li>
+</ul>
+
+<h3 class="ng-scope">Action: exécuter dès que possible</h3>
+
+<h4 class="ng-scope">Dans la vue</h4>
+
+<p class="ng-scope">Dans la vue, on demande à exécuter une action:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="1" last_line="6" extension="java" file=""><code class="hljs java"><pre>Action actionHauteur = ControleurAction.demanderAction(GCommande.CHOISIR_HAUTEUR);
+
+<span class="hljs-comment">// Une fois qu'on connais le choix de l'usager</span>
+actionHauteur.setArguments(leChoix);
+actionHauteur.executerDesQuePossible();
+</pre></code></div>
+
+<p class="ng-scope">L'action sera exécutée dès que possible, p.ex. dès que le modèle existe pour l'exécuter.</p>
+
+<h4 class="ng-scope">Dans le modèle</h4>
+
+<p class="ng-scope">À l'inverse, dans le modèle, on fournit une action:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="7" last_line="16" extension="java" file=""><code class="hljs java"><pre>ControleurAction.fournirAction(<span class="hljs-keyword">this</span>,
+        GCommande.CHOISIR_HAUTEUR,
+        <span class="hljs-keyword">new</span> ListenerFournisseur() {
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executer</span><span class="hljs-params">(Object... args)</span> </span>{
+    
+                setHauteur((<span class="hljs-keyword">int</span>) args[<span class="hljs-number">0</span>]);
+            }
+
+        });</pre></code></div>
+
+<p class="ng-scope">On peut fournir l'action même si la vue qui la demandera n'existe pas encore.</p>
+
+<h3 class="ng-scope">Observateur: réagir au changement</h3>
+
+<p class="ng-scope">Dans la vue, on va «observer» le modèle:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="18" last_line="26" extension="java" file=""><code class="hljs java"><pre>ControleurObservation.observerModele(MParametres.class.getSimpleName(),
+        <span class="hljs-keyword">new</span> ListenerObservateur() {
+
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">reagirChangementAuModele</span><span class="hljs-params">(Modele modele)</span> </span>{
+
+                afficherParametres((MParametres) modele);
+            }
+        });</pre></code></div>
+
+<p class="ng-scope">En particulier:</p>
+
+<ul class="ng-scope">
+<li>Si le modèle n'existe pas encore, la première observation sera retardée jusqu'à la création du modèle</li>
+</ul>
+
+<h3 class="ng-scope">Listener: promesse d'exécution</h3>
+
+<p class="ng-scope">Les actions et les observations reposent sur le concept de listener.
+Un listener représente du code qui sera exécuté plus tard.
+On parle parfois de promesse d'exécution.</p>
+
+<p class="ng-scope">Quand on définit un listener, on «promet» d'exécuter du code quand le bon moment arrivera:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="29" last_line="39" extension="java" file=""><code class="hljs java"><pre>ControleurObservation.observerModele(MParametres.class.getSimpleName(),
+
+        <span class="hljs-comment">// Quand ça sera le temps, je promets d'observer le modèle</span>
+        <span class="hljs-keyword">new</span> ListenerObservateur() {
+
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">reagirChangementAuModele</span><span class="hljs-params">(Modele modele)</span> </span>{
+
+                afficherParametres((MParametres) modele);
+            }
+        });</pre></code></div>
+
+<p class="ng-scope">Quand on appelle un listener, on indique que le bon moment est arrivé:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="41" last_line="42" extension="java" file=""><code class="hljs java"><pre><span class="hljs-comment">// Le modèle a changé, c'est le temps d'observer!</span>
+listenerObservateur.reagirNouveauModele(modele);</pre></code></div>
+
+<p class="ng-scope">Encore une fois, au ralenti:</p>
+
+<p class="ng-scope"></p><center class="ng-scope">
+<img width="450px" src="/cegep/420-5B5-MO/theorie/patrons/listener.png">
+</center><p class="ng-scope"></p></div></div></span></p></div></div></span></p></div><div id="procs"><div id="procs-cover" class="cover ng-scope" style="display:none" ng-click="hide_procs();"></div></div></div></body>

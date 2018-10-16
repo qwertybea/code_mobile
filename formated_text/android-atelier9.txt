@@ -1,0 +1,195 @@
+# Classe SourceDeDonnees
+
+public abstract class SourceDeDonnees {
+
+    public abstract Map<String, Object> chargerModele(final String cheminSauvegarde);
+    public abstract void sauvegarderModele(final String cheminSauvegarde, final Map<String, Object> objetJson);
+
+---------------
+# Classe SauvegardeTemporaire
+
+public class SauvegardeTemporaire extends SourceDeDonnees {
+
+    private Bundle bundle;
+
+    public SauvegardeTemporaire(Bundle bundle)
+
+    @Override
+    public Map<String, Object> chargerModele(String cheminSauvegarde)
+        /*
+         * Retourne null si le modèle n'est pas présent
+         *
+         */
+
+    @Override
+    public void sauvegarderModele(String cheminSauvegarde, Map<String, Object> objetJson)
+
+---------------
+# Classe Disque
+
+public class Disque extends SourceDeDonnees {
+
+    private static final Disque instance
+        /*
+         * L'instance unique du singleton
+         *
+         */
+
+    public static Disque getInstance()
+
+    private File repertoireRacine;
+
+    public void setRepertoireRacine(File repertoireRacine)
+
+    @Override
+    public Map<String, Object> chargerModele(String cheminSauvegarde)
+        /*
+         * Retourne null s'il est impossible de charger le modèle
+         *
+         */
+
+    @Override
+    public void sauvegarderModele(String cheminSauvegarde, Map<String, Object> objetJson)
+        /*
+         * Affiche un avertissement dans le log s'il est impossible de sauvegarder
+         * le modèle
+         *
+         */
+
+    private File getFichier(String cheminSauvegarde)
+        /*
+         * En général, le cheminSauvegarde est de la forme:
+         *
+         *     NomClasse/id
+         *
+         *     p.ex.
+         *
+         *     MParametres/usager23
+         *     MParametres/usager12
+         *
+         *     ou pour l'usager par défaut:
+         *
+         *     MParametres
+         *
+         */
+
+    private String getNomFichier(String nomModele)
+
+---------------
+# Classe ControleurModeles
+
+public class ControleurModeles {
+
+    private static Map<String, Modele> modelesEnMemoire;
+
+    private static SourceDeDonnees[] sequenceDeChargement;
+
+    private static List<SourceDeDonnees> listeDeSauvegardes;
+
+    static {
+
+        /*
+         * Initialisation
+         *
+         * Ajout du Disque dans la liste de sauvegarde
+         *
+         */
+
+    }
+
+    public static void setSequenceDeChargement(SourceDeDonnees... sequenceDeChargement)
+        /*
+         * Doit être appelée à la création de l'activité
+         *
+         */
+
+
+
+    public static void sauvegarderModeleDansCetteSource(String nomModele, SourceDeDonnees sourceDeDonnees)
+
+    static Modele getModele(final String nomModele){
+        /*
+         * Doit retourner un modèle (jamais null)
+         *
+         * Au besoin, utiliser la sequence de chargement pour charger le modèle
+         *
+         */
+
+    private static Modele chargerViaSequenceDeChargement(final String nomModele){
+        /*
+         * Commencer par créer un modèle vide
+         *
+         * (le sauvegarder en mémoire!)
+         *
+         * Ensuite, charger les données à partir de la première source
+         * de la séquence qui retourne non-null
+         *
+         */
+
+    private static Modele creerModeleSelonNom(String nomModele)
+        /*
+         * À partir du nom, créer le bon modèle
+         *
+         */
+
+    public static void sauvegarderModele(String nomModele){
+        /*
+         * Sauvegarder dans toutes les sources
+         *
+         */
+
+---------------
+# Exception ErreurModele
+
+public class ErreurModele extends RuntimeException {
+
+    public ErreurModele(Exception e)
+
+    public ErreurModele(String message)
+
+---------------
+# Singleton
+
+public final class MonSingleton{
+
+    private static final MonSingleton instance = new MonSingleton();
+
+    public static MonSingleton getInstance(){return instance;}
+
+    private MonSingleton(){
+
+        // Initialisation
+
+    }
+
+    // Pour le reste, c'est comme d'habitude
+}
+---------------
+MonSingleton.getInstance()  // Pour le reste, c'est comme d'habitude
+---------------
+# Lire/écrire sur le disque
+
+/data/user/0/
+
+---------------
+/data/user/0/ca.cours5b5.mathieubergeron
+
+---------------
+/data/data/ca.cours5b5.mathieubergeron
+
+---------------
+/data/data/ca.cours5b5.mathieubergeron/cache
+/data/data/ca.cours5b5.mathieubergeron/code_cache
+/data/data/ca.cours5b5.mathieubergeron/files
+
+---------------
+// Dans une activité
+File repertoireRacine = this.getFilesDir();
+
+---------------
+# Accéder aux fichiers
+
+    > cd Android/Sdk/platform-tools/
+    > adb shell
+
+---------------

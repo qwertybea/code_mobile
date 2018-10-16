@@ -1,0 +1,263 @@
+# Activité AParametres
+
+public class AParametres extends Activite {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+
+    private void restaurerParametres(Bundle savedInstanceState)
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+
+    private void sauvegarderParametres(Bundle outState)
+
+---------------
+# Exception ErreurDeSerialisation
+
+public class ErreurDeSerialisation extends RuntimeException {
+
+    public ErreurDeSerialisation(String message)
+
+---------------
+# Classe abstraite Modele
+
+public abstract class Modele {
+
+    public abstract void aPartirObjetJson(Map<String, Object> objetJson);
+
+    public abstract Map<String, Object> enObjetJson();
+
+---------------
+# Classe MParametres
+
+public class MParametres extends Modele {
+
+    // FIXME: c'est temporaire ; on va écrire un gestionnaire de modèles à l'Atelier07
+    public static MParametres instance;
+
+    @AttributSerialisable
+    public Integer hauteur;
+    private final String __hauteur = "hauteur";
+
+    @AttributSerialisable
+    public Integer largeur;
+    private final String __largeur = "largeur";
+
+    @AttributSerialisable
+    public Integer pourGagner;
+    private final String __pourGagner = "pourGagner";
+
+    public List<Integer> getChoixHauteur()
+
+    public List<Integer> getChoixLargeur()
+
+    public List<Integer> getChoixPourGagner()
+
+    @Override
+    public void aPartirObjetJson(Map<String, Object> objetJson)
+
+    @Override
+    public Map<String, Object> enObjetJson()
+
+---------------
+# Interface AttributSerialisable
+
+public @Retention(RetentionPolicy.RUNTIME) @interface AttributSerialisable
+
+---------------
+# Classe Jsonification
+
+public class Jsonification {
+
+    private static Gson gson
+
+    public static Map<String, Object> enObjetJson(String json)
+
+    public static String enChaine(Map<String, Object> objetJson)
+}
+
+---------------
+dependencies {
+    ...
+    implementation 'com.google.code.gson:gson:2.8.4'
+    ...
+}
+
+---------------
+# Rappels
+
+@Override
+protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+
+    // Votre code pour sauvegarder les données
+
+    // P.ex:
+    Map<String, Object> objetJson = monModele.enObjetJson();
+
+    String json = Jsonification.enChaine(objetJson);
+
+    outState.putString("MaCle", json);
+}
+---------------
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_parametres);
+
+    if(savedInstanceState != null){
+
+        // Votre code pour récupérer les données
+	
+	// P.ex:
+        String json = savedInstanceState.getString("MaCle");
+
+	Map<String, Object> objetJson = Jsonification.enObjetJson(json);
+
+	monModele.aPartirObjetJson(objetJson);
+    }
+}
+---------------
+Map<String, Object> objetJson = monModele.enObjetJson();
+
+for(Map.Entry<String, Object> entry : objetJson.entrySet()){
+
+    String cle = entry.getKey();
+    Object valeur = entry.getValue();
+
+---------------
+# Astuce
+
+// Sauvegarder
+objetJson.put(__hauteur, hauteur.toString());
+
+// Récupérer
+hauteur = Integer.valueOf((String)entry.getValue);
+
+---------------
+# Gérer un appareil avec adb
+
+> cd Android/Sdk/platform-tools/
+> adb.exe shell
+
+---------------
+> adb.exe install -r CHEMIN_COMPLET/FICHIER.apk
+
+---------------
+> adb.exe shell
+generic_x86:/ $ am start-activity NOM_COMPLET_APP/NOM_COMPLET_CLASSE_ACTIVITE
+
+# P.ex.
+generic_x86:/ $ am start-activity ca.cours5b5.mathieubergeron/ca.cours5b5.mathieubergeron.activites.AMenuPrincipal
+
+---------------
+> adb.exe shell
+generic_x86:/ $ run-as NOM_COMPLET_APP
+
+---------------
+> adb.exe shell
+generic_x86:/ $ run-as NOM_COMPLET_APP
+generic_x86:/ $ kill $(pidof NOM_COMPLET_APP)
+
+---------------
+# Installer la librairie
+
+dependencies {
+    ...
+    implementation 'com.google.code.gson:gson:2.8.4'
+    ...
+}
+
+---------------
+# Initialiser
+
+private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+---------------
+# Écrire en json
+
+// obtenir une chaîne à partir d'un objetJson
+Map<String, Object> objetJson = //...
+String chaineJson = gson.toJson(objetJson);
+---------------
+# Lire du json
+
+// obtenir un objetJson à partir d'une chaîne
+String chaineJson = // ...
+Map<String, Object> objetJson = gson.fromJson(chaineJson, Map.class);
+---------------
+# Sérialisation: objetJson
+
+"lesCase":{
+    "0":{},
+    "1":{
+	"0":{
+	    "couleur":"VIDE"
+	},
+	"1":{},
+	"2":{
+	    "couleur":"ROUGE"
+	},
+	"3":{},
+	"4":{},
+	"5":{},
+	"6":{},
+    },
+    "2":{},
+    "3":{},
+    "4":{},
+    "5":{}
+}
+
+---------------
+Map<String, Object> lesCases = new HashMap<>();
+Map<String, Object> colonneUn = new HashMap<>();
+Map<String, Object> caseVide = new HashMap<>();
+Map<String, Object> caseRouge = new HashMap<>();
+
+caseVide.put("couleur", "VIDE");
+caseRouge.put("couleur", "ROUGE");
+
+colonneUn.put("0", caseVide);
+colonneUn.put("1", null);
+colonneUn.put("2", caseRouge);
+colonneUn.put("3", null);
+colonneUn.put("4", null);
+colonneUn.put("5", null);
+colonneUn.put("6", null);
+
+lesCases.put("0", null);
+lesCases.put("1", colonneUn);
+lesCases.put("2", null);
+lesCases.put("3", null);
+lesCases.put("4", null);
+lesCases.put("5", null);
+
+---------------
+# Méthode avec un nombre variable d'arguments
+
+public void maMethode(Object... args){
+    for(Object arg : args){
+        // ...
+    }
+}
+---------------
+# En Java: réagir au choix d'un spinner
+
+monSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+	// P.ex. si les choix sont des chaînes
+	String leChoix = (String) parent.getAdapter().getItem(position);
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+});
+
+---------------

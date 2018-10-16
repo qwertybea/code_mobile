@@ -1,0 +1,357 @@
+# Énumération GCommande
+
+public enum GCommande {
+
+    JOUER_COUP_ICI,
+
+---------------
+# Classe Action
+
+public class Action {
+
+    Fournisseur fournisseur;
+
+    ListenerFournisseur listenerFournisseur;
+
+    Object[] args;
+
+    public void setArguments(Object... args) {
+
+    public void executerDesQuePossible(){
+        /*
+         * Appeler le contrôleur. C'est au contrôleur 
+         * de gérer l'action (mettre en file d'attente,
+         * exécuter si possible, etc.)
+         *
+         */
+
+    Action cloner(){
+        /*
+         *
+         * Ne pas oublier de cloner le tableau!
+         *    (à moins qu'il soit null)
+         *
+         */
+
+---------------
+# Interface Fournisseur
+
+public interface Fournisseur {
+
+---------------
+# Interface ListenerFournisseur
+
+public interface ListenerFournisseur {
+
+    void executer(Object... args);
+
+---------------
+# Classe ControleurAction
+
+public class ControleurAction {
+
+    private static Map<GCommande, Action> actions;
+    private static List<Action> fileAttenteExecution;
+
+    static {
+
+        /* TRUC: initialiser le Map actions comme suit:
+        *          - pour chaque GCommande
+        *               - insérer une action vide
+        *
+        * (l'avantage est qu'ensuite on a plus à tester si
+        *  une GCommande est dans le Map... elles y sont toutes!)
+        */
+
+    }
+
+
+    public static Action demanderAction(GCommande commande)
+        /*
+         * Retourner l'action au demandeur
+         * 
+         */
+
+
+    public static void fournirAction(Fournisseur fournisseur, GCommande commande, ListenerFournisseur listenerFournisseur)
+        /*
+         * Enregistrer le fournisseur
+         * Appeler la méthode qui exécute chaque
+         *   action de la file d'attente (bonus: pourquoi?)
+         * 
+         */
+
+
+    static void executerDesQuePossible(Action action)
+        /*
+         * Mettre l'action en file d'attente
+         * Appeler la méthode qui exécute chaque
+         *   action de la file d'attente
+         *   
+         */
+
+
+    private static void executerActionsExecutables()
+        /* 
+         * Itérer la file d'attente
+         *     Si l'action est exécutable:
+         * 
+         *         Avant d'exécuter l'action:
+         *             - l'enlever de la file d'attente
+         *       
+         *         Appeler la méthode pour exécuter l'action maintenant
+         *
+         *         Après avoir éxécuté l'action:
+         *             - lancer l'observation du fournisseur de cette action (si possible)
+         *
+         */
+
+    static boolean siActionExecutable(Action action)
+        /*
+         * Une action est exécutable si:
+         *     - le listenerFournisseur n'est pas null
+         *
+         */
+
+    private static synchronized void executerMaintenant(Action action)
+        /*
+         * Appeler le listenerFournisseur de l'action
+         *
+         * BONUS: à quoi sert le synchronized?
+         *
+         */
+
+    private static void lancerObservationSiApplicable(Action action)
+        /*
+         * Appeler le contrôleur pour lancer l'observation
+         *   du fournisseur (seulement si le fournisseur est un modèle)
+         *
+         */
+
+    private static void enregistrerFournisseur(Fournisseur fournisseur, GCommande commande, ListenerFournisseur listenerFournisseur)
+        /*
+         * Enregistrer le fournisseur et le listenerFournisseur dans l'action
+         *
+         */
+
+    private static void ajouterActionEnFileDAttente(Action action)
+        /*
+         * Créer un clone de l'action et
+         *   ajouter le clone à la file d'attente
+         *
+         * BONUS: pourquoi un clone?
+         *
+         */
+
+
+---------------
+# Ajout à la classe ControleurObservation
+
+public class ControleurObservation {
+
+    /******* Ajouts aux méthodes ********/
+
+
+    public static void lancerObservation(Modele modele)
+        /*
+         * Vérifier si le listener existe pour ce modele
+         * Appeler le listener
+         *
+         */
+
+
+
+
+
+---------------
+# Exception ErreurAction
+
+public class ErreurAction extends RuntimeException {
+
+    public ErreurAction(String message)
+
+    public ErreurAction(Exception e)
+
+---------------
+# Classe GCouleur
+
+public enum GCouleur {
+
+    ROUGE,
+    JAUNE,
+
+---------------
+# Classe MColonne
+
+public class MColonne extends Modele {
+
+    private List<GCouleur> jetons;
+
+    public MColonne()
+
+    public List<GCouleur> getJetons()
+
+    public void placerJeton(GCouleur couleur)
+
+    @Override
+    public void aPartirObjetJson(Map<String, Object> objetJson) throws ErreurSerialisation
+        /*
+         * Inutilisé
+         *
+         */
+
+    @Override
+    public Map<String, Object> enObjetJson() throws ErreurSerialisation
+        /*
+         * Inutilisé
+         *
+         */
+
+---------------
+# Classe MGrille
+
+public class MGrille extends Modele {
+
+    private List<MColonne> colonnes;
+
+    public MGrille(int largeur)
+
+    private void initialiserColonnes(int largeur)
+
+    public List<MColonne> getColonnes()
+
+    public void placerJeton(int colonne, GCouleur couleur)
+
+    @Override
+    public void aPartirObjetJson(Map<String, Object> objetJson) throws ErreurSerialisation
+        /*
+         * Inutilisé
+         *
+         */
+
+    @Override
+    public Map<String, Object> enObjetJson() throws ErreurSerialisation
+        /*
+         * Inutilisé
+         *
+         */
+
+---------------
+# Ajouts à la classe MPartie
+
+public class MPartie extends Modele implements Fournisseur {
+
+    /******** Ajouts aux attributs ********/
+
+    private MGrille grille;
+    private GCouleur couleurCourante;
+
+
+    /******** Ajouts aux méthodes ********/
+
+    public MGrille getGrille()
+
+    private void initialiserCouleurCourante()
+
+
+    private void fournirActionPlacerJeton()
+        /*
+         * Appeler fournirAction
+         *
+         */
+
+    protected void jouerCoup(int colonne)
+        /*
+         *
+         *
+         */
+
+
+    private void prochaineCouleurCourante()
+
+---------------
+# Ajouts à la classe VPartie
+
+public class VPartie extends Vue {
+
+    /****** Ajouts aux méthodes *****/
+
+    private void observerPartie()
+        /*
+         * Dans reagirChangementAuModele,
+         *   on veut rafraîchir la grille
+         *
+         */
+
+    private void miseAJourGrille(MPartie partie)
+
+---------------
+# Ajouts à la classe VGrille
+
+public class VGrille extends GridLayout {
+
+    // mémoriser les VCase ajoutés (avec un tableau à deux dimensions)
+    private VCase[][] lesCases;
+
+    /******** Ajouts aux méthodes *********/
+
+    // mémoriser les VCases avec un tableau
+    private void initialiserTableauDeCases(int hauteur, int largeur)
+
+    private void demanderActionEntete() {
+        /*
+         * On demande l'action JOUER_COUP_ICI
+         *
+         * L'action est à exécuter quand l'usager
+         *   clique sur un en-tête
+         */
+
+
+    private void ajouterEnTetes(int largeur){
+        /*
+         * Pour chaque en-tête, on veut
+         *   installer le Listener
+         */
+
+
+    private void installerListenerEntete(VEntete entete, final int colonne)
+
+    void afficherJetons(MGrille grille)
+
+    private void afficherJeton(int colonne, int rangee, GCouleur jeton)
+
+---------------
+# Ajouts à la classe VCase
+
+public class VCase extends AppCompatButton {
+
+    /********* Ajouts aux méthodes *********/
+
+    public void afficherJeton(GCouleur jeton)
+        /*
+         * Changer la couleur de fond selon
+         *   le jeton à afficher
+         *
+         */
+
+---------------
+# Action: exécuter dès que possible
+
+Action actionHauteur = ControleurAction.demanderAction(GCommande.CHOISIR_HAUTEUR);
+
+// Une fois qu'on connais le choix de l'usager
+actionHauteur.setArguments(leChoix);
+actionHauteur.executerDesQuePossible();
+
+---------------
+ControleurAction.fournirAction(this,
+        GCommande.CHOISIR_HAUTEUR,
+        new ListenerFournisseur() {
+            @Override
+            public void executer(Object... args) {
+    
+                setHauteur((int) args[0]);
+            }
+
+        });
+---------------

@@ -1,0 +1,478 @@
+<body ng-controller="root" root="" class="ng-scope"><div class="root ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/06/" markdown=""><div class="markdown"><h1 class="ng-scope">Atelier 6: Afficher la grille de jeu</h1>
+
+<h3 class="ng-scope">IMPORTANT</h3>
+
+<p class="ng-scope">Si vous n'aviez pas complété les ateliers 1-5, vous devez utiliser le corrigé: <a href="http://ciboulot.ca/cegep/420-5B5-MO/ateliers/partie01/corrige">http://ciboulot.ca/cegep/420-5B5-MO/ateliers/partie01/corrige</a></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/06/objectifs_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/06/objectifs_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Objectifs</h2>
+
+<p class="ng-scope">À partir de l'application de l'Atelier #5:</p>
+
+<ol class="ng-scope">
+<li>Créer un <code>ControleurObservation</code> par lequel la vue va recevoir le modèle</li>
+<li>Créer la vue <code>VPartie</code> et le modèle <code>MPartie</code></li>
+<li>Créer la vue <code>VGrille</code> et le modèle <code>MGrille</code></li>
+<li>Créer les vues <code>VEntete</code> et <code>VCase</code></li>
+<li>Reconception: <code>MParametres</code> et <code>MParametresPartie</code>
+<ul><li>(voir la section spécification pour les détails)
+<center>
+<img src="arborescence.png">
+</center></li></ul></li>
+<li>Créer l'activité <code>APartie</code> et ajouter un bouton au menu principal pour atteindre cette activité</li>
+<li>Afficher la grille avec les indices de chaque case et en-tête
+<ul><li>ATTENTION: le 0,0 graphique est en <strong>haut</strong> à gauche, alors que le 0,0 du jeu est en <strong>bas</strong> en gauche
+<center>
+<img width="500px" src="grille.png">
+</center></li></ul></li>
+<li>Afficher la grille avec les bonnes dimensions
+<center>
+<video width="500px" src="atelier06.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center></li>
+</ol></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/06/specification_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/06/specification_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Spécification</h2>
+
+<ul class="ng-scope">
+<li><p>Vous <strong>devez avoir</strong>:</p>
+
+<ul><li>chaque <em>classe et interface</em> de l'objectif</li>
+<li>chaque attribut ci-bas avec <strong>exactement</strong> le même type</li>
+<li>chaque méthode ci-bas avec <strong>exactement</strong> la même signature</li></ul></li>
+<li><p>Exception:</p>
+
+<ul><li>vous pouvez modifier/ajouter/ignorer des méthodes/attributs <code>private</code></li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Classe <code>ControleurObservation</code></h3>
+
+<ul class="ng-scope">
+<li>Le <code>ControleurObservation</code> gère la mise-à-jour des vues quand le modèle change</li>
+<li>La vue s'enregistre en appelant <code>observerModele</code> et en fournissant un listener
+<ul><li>(quand le modèle change, le contrôleur appèle ce listener)</li></ul></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ControleurObservation.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurObservation</span> </span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Map&lt;Modele, ListenerObservateur&gt; observations;
+
+    <span class="hljs-comment">// FIXME: c'est temporaire, on va écrire un contrôleur de modèles à l'atelier09</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> MPartie partie;
+
+    <span class="hljs-keyword">static</span> {
+
+    }
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">observerModele</span><span class="hljs-params">(String nomModele, <span class="hljs-keyword">final</span> ListenerObservateur listenerObservateur)</span>
+        <span class="hljs-comment">/*
+         * Enregistrer le listener dans le Map observations
+         * Lancer l'observation une première fois quand on reçoit le listener
+         *
+         * Pour l'instant, utiliser le nom pour décider quel modèle utiliser
+         *     - MParametres.instance ou ControleurObservation.partie
+         *
+         * À l'atelier09 on va écrire ControleurModeles pour gérer les modèles
+         *
+         * BONUS: pourquoi le modèle est identifié par son nom? (et pas son objet comme dans le Map?)
+         *
+         */</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Interface <code>ListenerObservateur</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ListenerObservateur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ListenerObservateur</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">reagirNouveauModele</span><span class="hljs-params">(Modele modele)</span>
+        <span class="hljs-comment">/*
+         * L'implantation par défaut est d'appeler reagirChangementAuModele
+         *
+         */</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">reagirChangementAuModele</span><span class="hljs-params">(Modele modele)</span></span>;
+</pre></code></div>
+
+<h3 class="ng-scope">Exception <code>ErreurObservation</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/ErreurObservation.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ErreurObservation</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">RuntimeException</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ErreurObservation</span><span class="hljs-params">(Exception e)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">ErreurObservation</span><span class="hljs-params">(String message)</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe <code>MParametresPartie</code></h3>
+
+<ul class="ng-scope">
+<li>Chaque partie a besoin de stoquer ses paramètres indépemment des paramètres courants de l'application.</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/MParametresPartie.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MParametresPartie</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modele</span> </span>{
+
+    <span class="hljs-annotation">@AttributSerialisable</span>
+    <span class="hljs-keyword">public</span> Integer hauteur;
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> String <span class="hljs-number">__</span>hauteur = <span class="hljs-string">"hauteur"</span>;
+
+    <span class="hljs-annotation">@AttributSerialisable</span>
+    <span class="hljs-keyword">public</span> Integer largeur;
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> String <span class="hljs-number">__l</span>argeur = <span class="hljs-string">"largeur"</span>;
+
+    <span class="hljs-annotation">@AttributSerialisable</span>
+    <span class="hljs-keyword">public</span> Integer pourGagner;
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">final</span> String <span class="hljs-number">__</span>pourGagner = <span class="hljs-string">"pourGagner"</span>;
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> MParametresPartie <span class="hljs-title">aPartirMParametres</span><span class="hljs-params">(MParametres mParametres)</span>
+        <span class="hljs-comment">/*
+         * Retourne une instance de MParametresPartie avec 
+         *   exactement les mêmes hauteur/largeur/pourGagner
+         *   que mParametres reçu en argument
+         *
+         */</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">MParametresPartie</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> Integer <span class="hljs-title">getHauteur</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> Integer <span class="hljs-title">getLargeur</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> Integer <span class="hljs-title">getPourGagner</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setHauteur</span><span class="hljs-params">(<span class="hljs-keyword">int</span> hauteur)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setLargeur</span><span class="hljs-params">(<span class="hljs-keyword">int</span> largeur)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setPourGagner</span><span class="hljs-params">(<span class="hljs-keyword">int</span> pourGagner)</span>
+
+    @Overrid
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">aPartirObjetJson</span><span class="hljs-params">(Map&lt;String, Object&gt; objetJson)</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+
+    @Override
+    <span class="hljs-keyword">public</span> Map&lt;String, Object&gt; <span class="hljs-title">enObjetJson</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe <code>MParametres</code></h3>
+
+<ul class="ng-scope">
+<li>Le modèle <code>MParametres</code> contient maintenant une instance de <code>MParametresPartie</code></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/MParametres.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MParametres</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modele</span> </span>{
+
+    <span class="hljs-comment">// FIXME: c'est temporaire. On va écrire un ControleurModeles à l'atelier09</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> MParametres instance = <span class="hljs-keyword">new</span> MParametres();
+
+    <span class="hljs-annotation">@AttributSerialisable</span>
+    <span class="hljs-keyword">public</span> MParametresPartie parametresPartie;
+    <span class="hljs-keyword">private</span> String <span class="hljs-number">__</span>parametresPartie = <span class="hljs-string">"parametresPartie"</span>;
+
+    <span class="hljs-keyword">private</span> List&lt;Integer&gt; choixHauteur;
+    <span class="hljs-keyword">private</span> List&lt;Integer&gt; choixLargeur;
+    <span class="hljs-keyword">private</span> List&lt;Integer&gt; choixPourGagner;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MParametres</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">getChoixHauteur</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">getChoixLargeur</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">getChoixPourGagner</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> MParametresPartie <span class="hljs-title">getParametresPartie</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">genererListesDeChoix</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">private</span> List&lt;Integer&gt; <span class="hljs-title">genererListeChoix</span><span class="hljs-params">(<span class="hljs-keyword">int</span> min, <span class="hljs-keyword">int</span> max)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">genererListeChoixHauteur</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">genererListeChoixLargeur</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">genererListeChoixPourGagner</span><span class="hljs-params">()</span>
+
+    @Override
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">aPartirObjetJson</span><span class="hljs-params">(Map&lt;String, Object&gt; objetJson)</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+
+    @Override
+    <span class="hljs-keyword">public</span> Map&lt;String, Object&gt; <span class="hljs-title">enObjetJson</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe <code>MPartie</code></h3>
+
+<ul class="ng-scope">
+<li>Pour l'instant, le modèle <code>MPartie</code> contient les pramètres de la partie
+<ul><li>(c'est suffisant pour afficher la grille)</li></ul></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/MPartie.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MPartie</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modele</span> </span>{
+
+    <span class="hljs-annotation">@AttributSerialisable</span>
+    <span class="hljs-keyword">public</span> MParametresPartie parametres;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String <span class="hljs-number">__</span>parametres = <span class="hljs-string">"parametres"</span>;
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MPartie</span><span class="hljs-params">(MParametresPartie parametres)</span>
+
+    <span class="hljs-keyword">public</span> MParametresPartie <span class="hljs-title">getParametres</span><span class="hljs-params">()</span>
+
+
+    @Override
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">aPartirObjetJson</span><span class="hljs-params">(Map&lt;String, Object&gt; objetJson)</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+        <span class="hljs-comment">/*
+         * Inutilisé pour l'instant
+         *
+         */</span>
+
+    @Override
+    <span class="hljs-keyword">public</span> Map&lt;String, Object&gt; <span class="hljs-title">enObjetJson</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> ErreurSerialisation
+        <span class="hljs-comment">/*
+         * Inutilisé pour l'instant
+         *
+         */</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe <code>VPartie</code></h3>
+
+<ul class="ng-scope">
+<li>La vue principale de la partie.</li>
+<li>N'oubliez pas de modifier le <code>.xml</code> de votre <em>layout</em> pour que la classe <code>VPartie</code> soit utilisée!</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/VPartie.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VPartie</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Vue</span> </span>{
+
+    <span class="hljs-keyword">private</span> VGrille grille;
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">VPartie</span><span class="hljs-params">(Context context)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VPartie</span><span class="hljs-params">(Context context, AttributeSet attrs)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VPartie</span><span class="hljs-params">(Context context, AttributeSet attrs, <span class="hljs-keyword">int</span> defStyleAttr)</span>
+
+
+    @Override
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onFinishInflate</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiser</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">observerPartie</span><span class="hljs-params">()</span>
+        <span class="hljs-comment">/*
+         * Appeler observer pour obtenir le modèle
+         *
+         * Une fois le modèle obtenu, créer la grille d'affichage
+         *
+         */</span>
+
+    <span class="hljs-keyword">private</span> MPartie <span class="hljs-title">getPartie</span><span class="hljs-params">(Modele modele)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiserGrille</span><span class="hljs-params">(MPartie partie)</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe <code>VGrille</code></h3>
+
+<ul class="ng-scope">
+<li>La vue <code>VGrille</code> est un <code>GridLayout</code></li>
+<li>Vous pouvez ajouter le <code>GridLayout</code> dans le mode <em>Design</em> d'AndroidStudio.</li>
+<li>Ensuite, n'oubliez-pas de modifier le <code>.xml</code> pour que la classe <code>VGrille</code> soit utilisée!</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/VGrille.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VGrille</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">GridLayout</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">VGrille</span><span class="hljs-params">(Context context)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VGrille</span><span class="hljs-params">(Context context, AttributeSet attrs)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VGrille</span><span class="hljs-params">(Context context, AttributeSet attrs, <span class="hljs-keyword">int</span> defStyleAttr)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> nombreRangees</span>;
+
+    <span class="hljs-keyword">private</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Colonne</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ArrayList</span>&lt;<span class="hljs-title">VCase</span>&gt; </span>{}
+
+    <span class="hljs-keyword">private</span> List&lt;Colonne&gt; colonnesDeCases;
+
+    <span class="hljs-keyword">private</span> List&lt;VEntete&gt; entetes;
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onFinishInflate</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiser</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">void</span> <span class="hljs-title">creerGrille</span><span class="hljs-params">(<span class="hljs-keyword">int</span> hauteur, <span class="hljs-keyword">int</span> largeur)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiserColonnes</span><span class="hljs-params">(<span class="hljs-keyword">int</span> largeur)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ajouterEnTetes</span><span class="hljs-params">(<span class="hljs-keyword">int</span> largeur)</span>
+
+    <span class="hljs-keyword">private</span> LayoutParams <span class="hljs-title">getMiseEnPageEntete</span><span class="hljs-params">(<span class="hljs-keyword">int</span> colonne)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ajouterCases</span><span class="hljs-params">(<span class="hljs-keyword">int</span> hauteur, <span class="hljs-keyword">int</span> largeur)</span>
+
+    <span class="hljs-keyword">private</span> LayoutParams <span class="hljs-title">getMiseEnPageCase</span><span class="hljs-params">(<span class="hljs-keyword">int</span> rangee, <span class="hljs-keyword">int</span> colonne)</span>
+</span></pre></code></div>
+
+<h4 class="ng-scope">ATTENTION</h4>
+
+<ul class="ng-scope">
+<li>Le 0,0 du <code>GridLayout</code> est en <strong>haut</strong> à gauche.</li>
+<li>Dans le jeu, les jetons sont ajoutés à partir du <strong>bas</strong>.
+<ul><li>(voir la capture d'écran de la grille)</li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Classe <code>VEntete</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/VEntete.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VEntete</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AppCompatButton</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">VEntete</span><span class="hljs-params">(Context context)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VEntete</span><span class="hljs-params">(Context context, AttributeSet attrs)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VEntete</span><span class="hljs-params">(Context context, AttributeSet attrs, <span class="hljs-keyword">int</span> defStyleAttr)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> colonne</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">VEntete</span><span class="hljs-params">(Context context, <span class="hljs-keyword">int</span> colonne)</span> </span>{
+        <span class="hljs-comment">/*
+         * Afficher le numéro de colonne!
+         *
+         */</span>
+</pre></code></div>
+
+<h3 class="ng-scope">Classe <code>VCase</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/06/java/VCase.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VCase</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AppCompatButton</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">VCase</span><span class="hljs-params">(Context context)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VCase</span><span class="hljs-params">(Context context, AttributeSet attrs)</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VCase</span><span class="hljs-params">(Context context, AttributeSet attrs, <span class="hljs-keyword">int</span> defStyleAttr)</span>
+
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">VCase</span><span class="hljs-params">(Context context, <span class="hljs-keyword">int</span> rangee, <span class="hljs-keyword">int</span> colonne)</span>
+        <span class="hljs-comment">/*
+         * Afficher la rangée et la colonne
+         *
+         * Changer la couleur de fond si désiré
+         *
+         */</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiser</span><span class="hljs-params">()</span>
+</span></pre></code></div></div></div></span></p>
+
+<h2 class="ng-scope">Remise</h2>
+
+<ol class="ng-scope">
+<li>Identifier votre dernier commit avec le Tag exact <code>atelier06</code></li>
+</ol>
+
+<h2 class="ng-scope">Théorie / procédures</h2>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/theorie/patrons/patrons01" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/patrons/patrons01" markdown=""><div class="markdown"><h3 class="ng-scope">Observateur: réagir au changement</h3>
+
+<p class="ng-scope">Dans la vue, on va «observer» le modèle:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="18" last_line="26" extension="java" file=""><code class="hljs java"><pre>ControleurObservation.observerModele(MParametres.class.getSimpleName(),
+        <span class="hljs-keyword">new</span> ListenerObservateur() {
+
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">reagirChangementAuModele</span><span class="hljs-params">(Modele modele)</span> </span>{
+
+                afficherParametres((MParametres) modele);
+            }
+        });</pre></code></div>
+
+<p class="ng-scope">En particulier:</p>
+
+<ul class="ng-scope">
+<li>Si le modèle n'existe pas encore, la première observation sera retardée jusqu'à la création du modèle</li>
+</ul>
+
+<h3 class="ng-scope">Listener: promesse d'exécution</h3>
+
+<p class="ng-scope">Les actions et les observations reposent sur le concept de listener.
+Un listener représente du code qui sera exécuté plus tard.
+On parle parfois de promesse d'exécution.</p>
+
+<p class="ng-scope">Quand on définit un listener, on «promet» d'exécuter du code quand le bon moment arrivera:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="29" last_line="39" extension="java" file=""><code class="hljs java"><pre>ControleurObservation.observerModele(MParametres.class.getSimpleName(),
+
+        <span class="hljs-comment">// Quand ça sera le temps, je promets d'observer le modèle</span>
+        <span class="hljs-keyword">new</span> ListenerObservateur() {
+
+            <span class="hljs-annotation">@Override</span>
+            <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">reagirChangementAuModele</span><span class="hljs-params">(Modele modele)</span> </span>{
+
+                afficherParametres((MParametres) modele);
+            }
+        });</pre></code></div>
+
+<p class="ng-scope">Quand on appelle un listener, on indique que le bon moment est arrivé:</p>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/patrons/patrons01.java" first_line="41" last_line="42" extension="java" file=""><code class="hljs java"><pre><span class="hljs-comment">// Le modèle a changé, c'est le temps d'observer!</span>
+listenerObservateur.reagirChangementAuModele(modele);</pre></code></div>
+
+<p class="ng-scope">Encore une fois, au ralenti:</p>
+
+<p class="ng-scope"></p><center class="ng-scope">
+<img width="450px" src="/cegep/420-5B5-MO/theorie/patrons/listener.png">
+</center><p class="ng-scope"></p></div></div></span>
+<span src="/cegep/420-5B5-MO/theorie/vue/vue04" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/vue/vue04" markdown=""><div class="markdown"><h3 class="ng-scope"><code>GridLayout</code></h3>
+
+<ul class="ng-scope">
+<li>Permet d'afficher sur une grille (un peu comme une table HTML)</li>
+<li>Les cases sont afficher de façon dynamique, en s'adaptant à la taille de la grille</li>
+<li>Pour placer un contrôle dans la grille, il faut un objet <code>LayoutParams</code>, p.ex.</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/vue/vue04.java" first_line="1" last_line="10" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">int</span> colonne = <span class="hljs-comment">//</span>
+<span class="hljs-keyword">int</span> rangee = <span class="hljs-comment">//</span>
+
+<span class="hljs-keyword">float</span> poidsColonne = <span class="hljs-comment">//</span>
+<span class="hljs-keyword">float</span> poidsRangee = <span class="hljs-comment">//</span>
+
+Spec specRangee = GridLayout.spec(rangee, poidsColonne);
+Spec specColonne = GridLayout.spec(colonne, poidsRangee);
+
+LayoutParams mesParams = <span class="hljs-keyword">new</span> LayoutParams(specRangee, specColonne);</pre></code></div>
+
+<ul class="ng-scope">
+<li>La <code>colonne</code> et la <code>rangee</code> indique la case où placer le contrôle</li>
+<li>Le poids indique l'importance relative de cette case
+<ul><li>p.ex. une case avec un poids de <code>3.0</code> pour la colonne sera trois fois plus large que les autres cases.</li>
+<li>(un peu comme le <code>colspan</code> de HTML)</li></ul></li>
+</ul>
+
+<h3 class="ng-scope"><code>GridLayout</code>: options supplémentaire du <code>LayoutParams</code></h3>
+
+<ul class="ng-scope">
+<li>Pour s'assurer que l'affichage soit dynamique, on va mettre les tailles à 0:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/vue/vue04.java" first_line="12" last_line="14" extension="java" file=""><code class="hljs"><pre>mesParams.width = 0;
+mesParams.height = 0;
+mesParams.setGravity(Gravity.FILL);</pre></code></div>
+
+<ul class="ng-scope">
+<li>Généralement, une taille de <code>0</code> indique de prendre le plus de place possible (l'équivalent de <code>width:auto</code> en CSS)</li>
+<li><p>Le <code>setGravity(Gravity.FILL)</code> affirme la même chose</p></li>
+<li><p>On peut aussi ajouter des marges:</p></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/vue/vue04.java" first_line="16" last_line="17" extension="java" file=""><code class="hljs"><pre>mesParams.rightMargin = 5;
+mesParams.leftMargin = 5;</pre></code></div>
+
+<h3 class="ng-scope"><code>GridLayout</code>: ajouter un contrôle</h3>
+
+<ul class="ng-scope">
+<li>Pour ajouter un contrôle:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/vue/vue04.java" first_line="19" last_line="21" extension="java" file=""><code class="hljs java"><pre>GridLayout grille = <span class="hljs-comment">//</span>
+
+grille.addView(monControle, mesParams);</pre></code></div></div></div></span></p>
+
+<!--
+
+<span src='/cegep/420-5B5-MO/theorie/android/android01' ng-controller='embed' embed></span>
+
+--></div><div id="procs"><div id="procs-cover" class="cover ng-scope" style="display:none" ng-click="hide_procs();"></div></div></div></body>

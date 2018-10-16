@@ -1,0 +1,667 @@
+<body ng-controller="root" root="" class="ng-scope"><div class="root ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie01/05/" markdown=""><div class="markdown"><h1 class="ng-scope">Atelier 5: sauvegarde d'un modèle</h1>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie01/05/objectifs_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie01/05/objectifs_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Problème à régler</h2>
+
+<ul class="ng-scope">
+<li><p>À l'Atelier#4, les choix de paramètres ne sont pas sauvegardés. À chaque nouvelle activité <code>AParametres</code>, les choix par défaut reviennent
+</p><center>
+<video width="250px" src="/cegep/420-5B5-MO/ateliers/partie01/04/atelier04.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center><p></p></li>
+<li><p>Pour régler ce problème, on va:</p>
+
+<ul><li>créer un modèle pour contenir les choix</li>
+<li>sauvegarder ce modèle quand on passe d'une activité à l'autre</li></ul></li>
+</ul>
+
+<h2 class="ng-scope">Objectifs</h2>
+
+<p class="ng-scope">À partir de l'application de l'Atelier #4:</p>
+
+<ol class="ng-scope">
+<li>Créer un modèle <code>MParametres</code> et des classes pour faciliter la sauvegarde
+<ul><li>(voir la section spécification pour les détails)
+<center>
+<img src="arborescence.png">
+</center></li></ul></li>
+<li>Reconception du code:
+<ul><li>S'assurer que la vue <code>VParametres</code> utilise le modèle stoqué dans <code>MParametres.instance</code></li>
+<li>Déplacer le code de la vue <code>VParametres</code> qui génère les choix de hauteur/largeur/pourGagner.
+Ce code va dans le modèle <code>MParametres</code></li></ul></li>
+<li>Les choix de paramètres doivent «survivre» à la transition d'une activité à l'autre
+<center>
+<video width="250px" src="atelier05.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center></li>
+<li>Afficher votre sauvegarde <code>json</code> dans le log
+<ul><li>Utiliser le nom de la classe comme clé de sauvegarde</li>
+<li>TRUC: changer l'orientation de l'appareil pour provoquer une sauvegarde
+<center>
+<img width="90%" src="log_json.png">
+</center>
+<!--&lt;/li></ul></li>
+<li><p>Les choix de paramètres doivent «survivre» lorsque le système détruit l'application</p>
+
+<ul><li>(dans la fenêtre ce Log, vérifier que l'app est <em>DEAD</em>)
+<center>
+<video width="450px" src="atelier05_02.webm" type="video/webm" autoplay loop muted>
+</center></li>
+<li><p>Pour détruire: </p>
+
+<ul><li>l'usager met l'activité sur pause</li>
+<li><p>vous tuez l'application comme le ferait le système:</p>
+
+<pre><code>&gt; cd Android/Sdk/platform-tools/
+&gt; adb.exe shell
+
+generic_x86:/ $ run-as NOM_APP_COMPLET
+generic_x86:/ $ kill $(pidof NOM_APP_COMPLET)
+
+# NOM_APP pex. ca.cours5b5.mathieubergeron
+</code></pre></li>
+<li>l'usager réactive l'activité
+--></li></ul></li>
+</ol></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie01/05/specification_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie01/05/specification_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Spécification</h2>
+
+<ul class="ng-scope">
+<li><p>Vous <strong>devez</strong> avoir:</p>
+
+<ul><li>les mêmes <em>classes et interfaces</em> de l'objectif</li>
+<li>les mêmes <em>attributs publics</em>, avec <strong>exactement</strong> les mêmes types</li>
+<li>les mêmes <em>méthodes publiques</em>, avec <strong>exactement</strong> les mêmes signatures</li></ul></li>
+<li><p>Vous <em>pouvez</em> utiliser les mêmes attributs et méthodes privées, mais ce n'est pas obligatoire</p></li>
+</ul>
+
+<!--
+### Classe `Chemin`
+
+* Le chemin identifie un modèle
+* Pour l'instant, on va utiliser le nom de la classe comme chemin
+* Plus tard, le chemin va servir à :
+    * Sauvegarder sur le disque
+    * Sauvegarder dans *Firebase*, la base de données que nous utiliseront
+        * (chaque entrée y est identifée par un chemin!)
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/Chemin.java'   extension='java' file></div>
+
+
+#### Note
+
+* Le séparateur de chemin sera le symbole `/`
+* Vous pouvez déjà créer une constante pour le stoquer
+
+
+### Interface `Sauvegardable`
+
+* Cette interface identifie les modèles qu'on veut sauvegarder
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/Sauvegardable.java'   extension='java' file></div>
+
+
+### Classe `Sauvegarde`
+
+* Classe pour faciliter la sauvegarde
+* Pour l'instant, le chemin de sauvegarde est le nom de la classe à sauvegarder
+    * P.ex. pour la classe `MParametres`, le chemin de sauvegarde est `"MParametres"`
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/Sauvegarde.java'   extension='java' file></div>
+
+
+
+### Exceptions
+
+Pour rendre le code plus lisible, on crée nos propres exceptions:
+
+* `ErreurChemin`
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/ErreurChemin.java'   extension='java' file></div>
+
+
+* `ErreurDeConstruction`
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/ErreurDeConstruction.java'   extension='java' file></div>
+
+
+* `ErreurDeSerialisation`
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/ErreurDeSerialisation.java'   extension='java' file></div>
+
+
+* `ErreurIntrospection`
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/ErreurIntrospection.java'   extension='java' file></div>
+
+
+-->
+
+<h3 class="ng-scope">Activité <code>AParametres</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/java/AParametres.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AParametres</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Activite</span> </span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onCreate</span><span class="hljs-params">(Bundle savedInstanceState)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">restaurerParametres</span><span class="hljs-params">(Bundle savedInstanceState)</span>
+
+    @Override
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onSaveInstanceState</span><span class="hljs-params">(Bundle outState)</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">sauvegarderParametres</span><span class="hljs-params">(Bundle outState)</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Exception <code>ErreurDeSerialisation</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/java/ErreurDeSerialisation.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ErreurDeSerialisation</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">RuntimeException</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ErreurDeSerialisation</span><span class="hljs-params">(String message)</span>
+</span></pre></code></div>
+
+<h3 class="ng-scope">Classe abstraite <code>Modele</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/java/Modele.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Modele</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">aPartirObjetJson</span><span class="hljs-params">(Map&lt;String, Object&gt; objetJson)</span></span>;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> Map&lt;String, Object&gt; enObjetJson();
+</pre></code></div>
+
+<ul class="ng-scope">
+<li>La méthode <code>aPartirObjetJson</code> charge les données du modèle à partir d'une sauvegarde en <em>objetJson</em> (<code>Map&lt;String, Object</code>)</li>
+<li>La méthode <code>enObjetJson</code> retoure une sauvegarde des données du modèle <em>objetJson</em> </li>
+<li>Chaque modèle devra implanter ces deux méthodes</li>
+</ul>
+
+<h3 class="ng-scope">Classe <code>MParametres</code></h3>
+
+<ul class="ng-scope">
+<li>Pour l'instant, le modèle est stoqué dans un attribut statique</li>
+<li>L'annotation <code>@AttributSerialisable</code> indique quel attribut du modèle sera sauvegardé</li>
+<li>Un attribut de la forme <code>__attr</code> sert à stoquer le nom de l'attribut.</li>
+<li>Maintenant qu'on a un modèle, le code de génération des choix est à déplacer dans le modèle
+<ul><li>La vue <code>VParametres</code> doit se concentrer à afficher</li></ul></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/java/MParametres.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MParametres</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modele</span> </span>{
+
+    <span class="hljs-comment">// FIXME: c'est temporaire ; on va écrire un gestionnaire de modèles à l'Atelier07</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> MParametres instance;
+
+    <span class="hljs-annotation">@AttributSerialisable</span>
+    <span class="hljs-keyword">public</span> Integer hauteur;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String <span class="hljs-number">__</span>hauteur = <span class="hljs-string">"hauteur"</span>;
+
+    <span class="hljs-annotation">@AttributSerialisable</span>
+    <span class="hljs-keyword">public</span> Integer largeur;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String <span class="hljs-number">__l</span>argeur = <span class="hljs-string">"largeur"</span>;
+
+    <span class="hljs-annotation">@AttributSerialisable</span>
+    <span class="hljs-keyword">public</span> Integer pourGagner;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String <span class="hljs-number">__</span>pourGagner = <span class="hljs-string">"pourGagner"</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">getChoixHauteur</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">getChoixLargeur</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">public</span> List&lt;Integer&gt; <span class="hljs-title">getChoixPourGagner</span><span class="hljs-params">()</span>
+
+    @Override
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">aPartirObjetJson</span><span class="hljs-params">(Map&lt;String, Object&gt; objetJson)</span>
+
+    @Override
+    <span class="hljs-keyword">public</span> Map&lt;String, Object&gt; <span class="hljs-title">enObjetJson</span><span class="hljs-params">()</span>
+</span></pre></code></div>
+
+<h4 class="ng-scope">Note</h4>
+
+<ul class="ng-scope">
+<li>Les attributs à sauvegarder sont <code>public</code> pour des raisons techniques
+<ul><li>(sinon le code de sérialisation ne peut accéder à l'attribut)</li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Interface <code>AttributSerialisable</code></h3>
+
+<ul class="ng-scope">
+<li>Identifie les attributs à sérialiser</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/java/AttributSerialisable.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-annotation">@Retention</span>(RetentionPolicy.RUNTIME) <span class="hljs-annotation">@interface</span> AttributSerialisable
+</pre></code></div>
+
+<h4 class="ng-scope">Note</h4>
+
+<ul class="ng-scope">
+<li>L'annotation <code>@Retention(RetentionPolicy.RUNTIME)</code> est nécessaire
+<ul><li>(par défaut, les annotations sont effacées après la compilation)</li></ul></li>
+</ul>
+
+<!--
+
+### Interface `Constructible`
+
+* Identifie chaque classe qu'on peut construire à partir du nom 
+    * (dans le *Factory* `Construction`)
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/Constructible.java'   extension='java' file></div>
+
+
+### Classe `Construction`
+
+* Un *Factory*: une classe responsable de construire des objets
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/Construction.java'   extension='java' file></div>
+
+
+### Classe `Introspection`
+
+* Pour identifier une classe à partir de son nom
+* Dans une sauvegarde, on a le chemin (nom de la classe) et les données
+    * Pour reconstruire le modèle, il faut d'abord identifier la classe à partir de son nom
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/Introspection.java'   extension='java' file></div>
+
+
+-->
+
+<h3 class="ng-scope">Classe <code>Jsonification</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/java/Jsonification.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Jsonification</span> </span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Gson gson
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Map&lt;String, Object&gt; enObjetJson(String json)
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title">enChaine</span><span class="hljs-params">(Map&lt;String, Object&gt; objetJson)</span>
+}
+</span></pre></code></div>
+
+<h4 class="ng-scope">Note</h4>
+
+<ul class="ng-scope">
+<li>Pour installer la librairie <code>gson</code>, copier cette ligne dans la section <code>dependencies</code> de votre <code>gradle.build (Moduel: app)</code></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/java/gradle.html" extension="html" file=""><code class="hljs java"><pre>dependencies {
+    ...
+    implementation <span class="hljs-string">'com.google.code.gson:gson:2.8.4'</span>
+    ...
+}
+</pre></code></div>
+
+<!--
+
+### Interface `Serialisable`
+
+* Identifie les objets qu'on peut sérialiser
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/Serialisable.java'   extension='java' file></div>
+
+
+### Classe `Serialisation`
+
+* Classe pour effectuer la sérialisation et la désérialisation d'un objet
+* Sérialisation: 
+    * À partir d'un objet, produire un *objetJson* (`Map<String, Object>`)
+* Désérialisation: 
+    * À partir d'un *objetJson*, mettre à jour tous les attributs d'un objet
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/java/Serialisation.java'   extension='java' file></div>
+
+
+--></div></div></span></p>
+
+<!--
+
+## ATTENTION
+
+* Vous n'êtes pas obligé de sérialiser vos modèles en utilisant l'introspection expliquée dans la théorie ci-bas.
+* Vous pouvez écrire du code de ce genre:
+
+
+
+<div class='file' src='/cegep/420-5B5-MO/ateliers/partie01/05/sans_introspection.java'   extension='java' file></div>
+
+
+* Ce genre de code est plus simple à écrire, mais vous allez écrire plus de code!
+    * (aussi c'est plus difficile à déboguer)
+-->
+
+<h2 class="ng-scope">Rappels</h2>
+
+<ul class="ng-scope">
+<li>La sauvegarde temporaire des données se fait dans l'Activité, p.ex:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/sauvegarde.java" first_line="1" last_line="13" extension="java" file=""><code class="hljs java"><pre><span class="hljs-annotation">@Override</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onSaveInstanceState</span><span class="hljs-params">(Bundle outState)</span> </span>{
+    <span class="hljs-keyword">super</span>.onSaveInstanceState(outState);
+
+    <span class="hljs-comment">// Votre code pour sauvegarder les données</span>
+
+    <span class="hljs-comment">// P.ex:</span>
+    Map&lt;String, Object&gt; objetJson = monModele.enObjetJson();
+
+    String json = Jsonification.enChaine(objetJson);
+
+    outState.putString(<span class="hljs-string">"MaCle"</span>, json);
+}</pre></code></div>
+
+<ul class="ng-scope">
+<li>La restauration se fait aussi dans l'Activité, p.ex:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/sauvegarde.java" first_line="16" last_line="32" extension="java" file=""><code class="hljs java"><pre><span class="hljs-annotation">@Override</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onCreate</span><span class="hljs-params">(Bundle savedInstanceState)</span> </span>{
+    <span class="hljs-keyword">super</span>.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_parametres);
+
+    <span class="hljs-keyword">if</span>(savedInstanceState != <span class="hljs-keyword">null</span>){
+
+        <span class="hljs-comment">// Votre code pour récupérer les données</span>
+	
+	<span class="hljs-comment">// P.ex:</span>
+        String json = savedInstanceState.getString(<span class="hljs-string">"MaCle"</span>);
+
+	Map&lt;String, Object&gt; objetJson = Jsonification.enObjetJson(json);
+
+	monModele.aPartirObjetJson(objetJson);
+    }
+}</pre></code></div>
+
+<ul class="ng-scope">
+<li>Pour itérer un <code>Map</code>, utiliser le <code>EntrySet</code>, p.ex.:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/map.java" extension="java" file=""><code class="hljs html"><pre>Map<span class="hljs-tag">&lt;<span class="hljs-title">String,</span> <span class="hljs-attribute">Object</span>&gt;</span> objetJson = monModele.enObjetJson();
+
+for(Map.Entry<span class="hljs-tag">&lt;<span class="hljs-title">String,</span> <span class="hljs-attribute">Object</span>&gt;</span> entry : objetJson.entrySet()){
+
+    String cle = entry.getKey();
+    Object valeur = entry.getValue();
+</pre></code></div>
+
+<h2 class="ng-scope">Astuce</h2>
+
+<ul class="ng-scope">
+<li>Sauvegarder/récupérer un attribut entier en tant que chaîne:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie01/05/entier.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-comment">// Sauvegarder</span>
+objetJson.put(<span class="hljs-number">__</span>hauteur, hauteur.toString());
+
+<span class="hljs-comment">// Récupérer</span>
+hauteur = Integer.valueOf((String)entry.getValue);
+</pre></code></div>
+
+<ul class="ng-scope">
+<li>De cette façon, on évite d'avoir à tester la représentation utilisée par la librairie d'écriture json (qui est parfois <code>double</code>, parfois <code>long</code>).</li>
+</ul>
+
+<h2 class="ng-scope">Remise</h2>
+
+<ol class="ng-scope">
+<li>Identifier votre dernier commit avec le Tag exact <code>atelier05</code></li>
+<li>Remettre votre dernier commit sur Moodle, <code>REMISE: atelier#5</code></li>
+</ol>
+
+<h2 class="ng-scope">Théorie / procédures</h2>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/theorie/android/android01" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/android/android01" markdown=""><div class="markdown"><h3 class="ng-scope">Android est un Linux</h3>
+
+<ul class="ng-scope">
+<li>Android utilise le noyau Linux et certaines librairies libres (p.ex. <em>libc</em>, <em>OpenGL</em>, <em>WebKit</em>)</li>
+</ul>
+
+<h3 class="ng-scope">Java sans JVM</h3>
+
+<ul class="ng-scope">
+<li>Le langage de développement est Java, mais Android n'utilise pas la JVM</li>
+<li>Le code Java est compilé vers un fichier <code>.apk</code></li>
+<li>À l'exécution, du code natif est généré <em>à la volée</em> par l'environnement d'exécution ART (<em>Android Runtime</em>)</li>
+</ul>
+
+<h3 class="ng-scope">Un usager pour chaque application</h3>
+
+<ul class="ng-scope">
+<li>Pour chaque application, Android crée un nouvel usager
+<ul><li>(ce qui facilite la gestion des droits d'accès)</li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Une application est un processus</h3>
+
+<ul class="ng-scope">
+<li>Lorsque l'application s'exécute, c'est un processus Linux normal</li>
+<li>Comme tout processus Linux, le processus est dormant lorsqu'en attente d'un événement (p.ex. donnée, événement usager)</li>
+</ul>
+
+<h3 class="ng-scope">Gérer un appareil avec <code>adb</code></h3>
+
+<ul class="ng-scope">
+<li><p>L'outil <code>adb</code> (<em>Android Device Bridge</em>) vous permet de gérer un appareil</p></li>
+<li><p>Ouvrir une console sur l'appareil</p>
+
+<pre><code>&gt; cd Android/Sdk/platform-tools/
+&gt; adb.exe shell
+</code></pre></li>
+<li><p>Installer une application (fichier <code>.apk</code>)</p>
+
+<pre><code>&gt; adb.exe install -r CHEMIN_COMPLET/FICHIER.apk
+</code></pre></li>
+<li><p>Démarrer une application (dans le shell)</p>
+
+<pre><code>&gt; adb.exe shell
+generic_x86:/ $ am start-activity NOM_COMPLET_APP/NOM_COMPLET_CLASSE_ACTIVITE
+
+# P.ex.
+generic_x86:/ $ am start-activity ca.cours5b5.mathieubergeron/ca.cours5b5.mathieubergeron.activites.AMenuPrincipal
+</code></pre></li>
+<li><p>Obtenir les mêmes droits que votre application (dans le shell)</p>
+
+<pre><code>&gt; adb.exe shell
+generic_x86:/ $ run-as NOM_COMPLET_APP
+</code></pre></li>
+<li><p>Détruire votre application</p>
+
+<pre><code>&gt; adb.exe shell
+generic_x86:/ $ run-as NOM_COMPLET_APP
+generic_x86:/ $ kill $(pidof NOM_COMPLET_APP)
+</code></pre></li>
+<li><p>Par exemple:</p>
+
+<ul><li>(noter que le processus devient  <em>DEAD</em> dans le <code>logcat</code>)</li></ul></li>
+</ul>
+
+<p class="ng-scope"></p><center class="ng-scope">
+<video width="450px" src="detruire.webm" type="video/webm" autoplay="" loop="" muted="">
+</video></center><p class="ng-scope"></p></div></div></span>
+<span src="/cegep/420-5B5-MO/theorie/gson/gson01" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/gson/gson01" markdown=""><div class="markdown"><h3 class="ng-scope">Installer la librairie</h3>
+
+<ul class="ng-scope">
+<li>Pour installer la librairie <code>gson</code>, copier cette ligne dans la section <code>dependencies</code> de votre <code>gradle.build (Moduel: app)</code></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/gson/gradle.html" extension="html" file=""><code class="hljs java"><pre>dependencies {
+    ...
+    implementation <span class="hljs-string">'com.google.code.gson:gson:2.8.4'</span>
+    ...
+}
+</pre></code></div>
+
+<ul class="ng-scope">
+<li>Ensuite, faire <code>Sync</code> dans Android Studio</li>
+</ul>
+
+<h3 class="ng-scope">Initialiser</h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/gson/gson01.java" first_line="1" last_line="1" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Gson gson = <span class="hljs-keyword">new</span> GsonBuilder().setPrettyPrinting().create();</pre></code></div>
+
+<h4 class="ng-scope">Note</h4>
+
+<ul class="ng-scope">
+<li>Pour du <code>json</code> plat, laisser tomber l'appel à <code>setPrettyPrinting()</code></li>
+</ul>
+
+<h3 class="ng-scope">Écrire en <code>json</code></h3>
+
+<ul class="ng-scope">
+<li>À partir d'un <em>objetJson</em></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/gson/gson01.java" first_line="3" last_line="5" extension="java" file=""><code class="hljs java"><pre><span class="hljs-comment">// obtenir une chaîne à partir d'un objetJson</span>
+Map&lt;String, Object&gt; objetJson = <span class="hljs-comment">//...</span>
+String chaineJson = gson.toJson(objetJson);</pre></code></div>
+
+<h4 class="ng-scope">Note</h4>
+
+<ul class="ng-scope">
+<li>La librairie <em>gson</em> offre beaucoup plus de fonctionnalités.</li>
+<li>L'utilisation simple que nous en faisons nous permettra de réutiliser notre code plus tard quand nous écrirons dans la base de données <em>Firebase</em></li>
+</ul>
+
+<h3 class="ng-scope">Lire du <code>json</code></h3>
+
+<ul class="ng-scope">
+<li>Et créer un <em>objetJson</em></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/gson/gson01.java" first_line="7" last_line="9" extension="java" file=""><code class="hljs java"><pre><span class="hljs-comment">// obtenir un objetJson à partir d'une chaîne</span>
+String chaineJson = <span class="hljs-comment">// ...</span>
+Map&lt;String, Object&gt; objetJson = gson.fromJson(chaineJson, Map.class);</pre></code></div></div></div></span>
+<span src="/cegep/420-5B5-MO/theorie/java/java02" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/java/java02" markdown=""><div class="markdown"><h3 class="ng-scope">Sérialisation: remarques générales</h3>
+
+<ul class="ng-scope">
+<li><p>Pour les valeurs à sérialiser, utiliser les classes: <code>Integer</code>, <code>Boolean</code>, etc.</p>
+
+<ul><li>(les types primitifs sont des cas d'exception qui compliquent la sérialisation)</li></ul></li>
+<li><p>Pour les structures, utiliser seulement <code>Map&lt;&gt;</code>, en particulier:</p>
+
+<ul><li>Éviter les tableaux (qui sont des cas spéciaux qui compliquent la sérialisation)</li></ul></li>
+</ul>
+
+<h3 class="ng-scope">Sérialisation: objetJson</h3>
+
+<ul class="ng-scope">
+<li><p>Chaque objet sérialisé sera représenté par un <em>objetJson</em>: <code>Map&lt;String, Object&gt;</code></p>
+
+<ul><li>(où les valeurs du <code>Map</code> sont aussi des <em>objetJson</em>)</li></ul></li>
+<li><p>Par exemple, voici une valeur dans <em>Firebase</em>, la base de données que nous utiliseront:
+</p><center>
+<img src="/cegep/420-5B5-MO/theorie/java/objetjson.png">
+</center><p></p></li>
+<li><p>Voici l'équivalent en <code>json</code>:</p></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/java/objetjson.css" extension="css" file=""><code class="hljs java"><pre><span class="hljs-string">"lesCase"</span>:{
+    <span class="hljs-string">"0"</span>:{},
+    <span class="hljs-string">"1"</span>:{
+	<span class="hljs-string">"0"</span>:{
+	    <span class="hljs-string">"couleur"</span>:<span class="hljs-string">"VIDE"</span>
+	},
+	<span class="hljs-string">"1"</span>:{},
+	<span class="hljs-string">"2"</span>:{
+	    <span class="hljs-string">"couleur"</span>:<span class="hljs-string">"ROUGE"</span>
+	},
+	<span class="hljs-string">"3"</span>:{},
+	<span class="hljs-string">"4"</span>:{},
+	<span class="hljs-string">"5"</span>:{},
+	<span class="hljs-string">"6"</span>:{},
+    },
+    <span class="hljs-string">"2"</span>:{},
+    <span class="hljs-string">"3"</span>:{},
+    <span class="hljs-string">"4"</span>:{},
+    <span class="hljs-string">"5"</span>:{}
+}
+</pre></code></div>
+
+<ul class="ng-scope">
+<li>Voici l'équivalent en Java:</li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/java/objetjson.java" extension="java" file=""><code class="hljs java"><pre>Map&lt;String, Object&gt; lesCases = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
+Map&lt;String, Object&gt; colonneUn = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
+Map&lt;String, Object&gt; caseVide = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
+Map&lt;String, Object&gt; caseRouge = <span class="hljs-keyword">new</span> HashMap&lt;&gt;();
+
+caseVide.put(<span class="hljs-string">"couleur"</span>, <span class="hljs-string">"VIDE"</span>);
+caseRouge.put(<span class="hljs-string">"couleur"</span>, <span class="hljs-string">"ROUGE"</span>);
+
+colonneUn.put(<span class="hljs-string">"0"</span>, caseVide);
+colonneUn.put(<span class="hljs-string">"1"</span>, <span class="hljs-keyword">null</span>);
+colonneUn.put(<span class="hljs-string">"2"</span>, caseRouge);
+colonneUn.put(<span class="hljs-string">"3"</span>, <span class="hljs-keyword">null</span>);
+colonneUn.put(<span class="hljs-string">"4"</span>, <span class="hljs-keyword">null</span>);
+colonneUn.put(<span class="hljs-string">"5"</span>, <span class="hljs-keyword">null</span>);
+colonneUn.put(<span class="hljs-string">"6"</span>, <span class="hljs-keyword">null</span>);
+
+lesCases.put(<span class="hljs-string">"0"</span>, <span class="hljs-keyword">null</span>);
+lesCases.put(<span class="hljs-string">"1"</span>, colonneUn);
+lesCases.put(<span class="hljs-string">"2"</span>, <span class="hljs-keyword">null</span>);
+lesCases.put(<span class="hljs-string">"3"</span>, <span class="hljs-keyword">null</span>);
+lesCases.put(<span class="hljs-string">"4"</span>, <span class="hljs-keyword">null</span>);
+lesCases.put(<span class="hljs-string">"5"</span>, <span class="hljs-keyword">null</span>);
+</pre></code></div>
+
+<h4 class="ng-scope">Notes</h4>
+
+<ul class="ng-scope">
+<li>On ne va évidemment pas écrire à la main le <code>json</code>
+<ul><li>(une librairie va le faire)</li></ul></li>
+<li>On ne pas remplir à la main les <code>Map&lt;String, Object&gt;</code>
+<ul><li>(on va écrire du code de sérialisation pour le faire)</li></ul></li>
+<li>Dans l'exemple, on a laissé des valeurs nulles pour simplifier (elles ne sont pas nulles dans la base de données)</li>
+</ul>
+
+<h3 class="ng-scope">Méthode avec un nombre variable d'arguments</h3>
+
+<ul class="ng-scope">
+<li>Java permet de recevoir un tableau d'arguments avec le type et le mot clé <code>...</code></li>
+</ul>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/java/java02.java" first_line="46" last_line="50" extension="java" file=""><code class="hljs java"><pre><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">maMethode</span><span class="hljs-params">(Object... args)</span></span>{
+    <span class="hljs-keyword">for</span>(Object arg : args){
+        <span class="hljs-comment">// ...</span>
+    }
+}</pre></code></div></div></div></span>
+<span src="/cegep/420-5B5-MO/theorie/vue/vue03" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/theorie/vue/vue03" markdown=""><div class="markdown"><h3 class="ng-scope">En Java: réagir au choix d'un spinner</h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/theorie/vue/vue03.java" extension="java" file=""><code class="hljs java"><pre>monSpinner.setOnItemSelectedListener(<span class="hljs-keyword">new</span> AdapterView.OnItemSelectedListener() {
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onItemSelected</span><span class="hljs-params">(AdapterView&lt;?&gt; parent, View view, <span class="hljs-keyword">int</span> position, <span class="hljs-keyword">long</span> id)</span> </span>{
+
+	<span class="hljs-comment">// P.ex. si les choix sont des chaînes</span>
+	String leChoix = (String) parent.getAdapter().getItem(position);
+
+
+    }
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onNothingSelected</span><span class="hljs-params">(AdapterView&lt;?&gt; parent)</span> </span>{
+
+    }
+});
+</pre></code></div>
+
+<h4 class="ng-scope">Note</h4>
+
+<ul class="ng-scope">
+<li>Dans l'exemple, les choix du spinner sont des <code>String</code>. Il faut ajuster selon le type de choix de votre spinner.</li>
+</ul></div></div></span></p></div><div id="procs"><div id="procs-cover" class="cover ng-scope" style="display:none" ng-click="hide_procs();"></div></div></div></body>
