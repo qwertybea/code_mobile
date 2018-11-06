@@ -1,0 +1,184 @@
+# Classe ProxyValeur
+
+public class ProxyValeur extends Proxy {
+
+    private ValueEventListener valueEventListener
+
+    private Action actionNouvelleValeur
+
+    private boolean valeurEcrite
+
+    public ProxyValeur(String cheminServeur) {
+        super(cheminServeur);
+
+    public void setActionNouvelleValeur(GCommande commande){
+
+    @Override
+    public void connecterAuServeur(){
+
+    public void deconnecterDuServeur(){
+
+    @Override
+    public void detruireValeurs() {
+
+    private void creerListener(){
+
+---------------
+# Ajouts à GCommande
+
+package ca.cours5b5.mathieubergeron.global;
+
+
+public enum GCommande {
+
+    /******** ajouts ***********/
+
+    RECEVOIR_JOUEUR_EN_ATTENTE,
+    RECEVOIR_JOUEUR_INVITE,
+
+---------------
+# Classe JoueursEnAttente
+
+public final class JoueursEnAttente implements Fournisseur {
+    
+    private static final JoueursEnAttente instance
+    public static JoueursEnAttente getInstance()
+
+    private ProxyListe proxyJoueursEnAttente
+    private String __joueursEnAttente
+
+    private JoueursEnAttente(){
+        /*
+         * Créer et initialiser le proxy
+         * Fournir les actions
+         */
+
+    private void fournirActions()
+        /*
+         * Fournir l'action RECEVOIR_JOUEUR_EN_ATTENTE
+         */
+
+    private void fournirActionAjouterJoueurEnAttente() {
+        /*
+         * Si le joueur en attente n'est pas l'usager courant
+         * Basculer en mode invitation
+         */
+
+    public void inscrireJoueurEnAttente() {
+        /*
+         * Ajouter l'id de l'usager courant à la liste de joueurs en attente
+         * (utiliser le proxyJoueursEnAttente)
+         */
+
+
+    private void basculerEnModeInvitation(String idJoueurEnAttente) {
+        /*
+         * Basculer en mode hôte ou en mode invite
+         *   à vous de choisir un test qui fonctionne pour chaque IdUsager
+         *
+         */
+
+
+    private void basculerEnModeHote(String idJoueurHote, String idJoueurInvite) {
+        /*
+         * Créer et démarrer la partie à l'aide du ControleurPartieReseau
+         *
+         */
+
+    private void basculerEnModeInvite(String idJoueurHote, String idJoueurInvite) {
+        /*
+         * ajouter les id usager à JoueurInvite
+         * connecter JoueurInvite au serveur
+         *
+         * (autrement dit, on attent d'être invité à la partie)
+         */
+
+
+    public void connecterAuServeur(){
+
+    public void deconnecterDuServeur() {
+
+
+---------------
+# Classe JoueurInvite
+
+public final class JoueurInvite implements Fournisseur {
+
+    private JoueurInvite(){}
+
+    private static final JoueurInvite instance
+
+    public static JoueurInvite getInstance()
+
+    protected String idJoueurInvite;
+    protected String idJoueurHote;
+
+    protected ProxyValeur proxyInviterJoueur;
+
+    public void setIdJoueurs(String idJoueurHote, String idJoueurInvite) {
+        /*
+         * Initialiser après avoir sauvegarder les données
+         */
+
+    protected void initialiser() {
+        /*
+         * Créer et initialiser le proxy
+         * Fournir l'action RECEVOIR_JOUEUR_INVITE
+         */
+
+    public void connecterAuServeur() {
+
+    public void deconnecterDuServeur() {
+
+    private String getCheminPartie(){
+
+    protected String getCheminInviterJoueur(){
+
+    private void fournirActionRecevoirInvite() {
+        /*
+         * Si le joueur courant est le joueur invité:
+         *    demarrerPartie
+         */
+
+    protected void demarrerPartie(){
+        /*
+         * Charger la partie du serveur
+         * Démarrer la partie
+         */
+
+---------------
+# Ajouts à MPartieReseau
+
+public class MPartieReseau extends MPartie implements Fournisseur, Identifiable {
+
+    /************* ajout ************/
+
+    public void setIdJoueurs(String idJoueurHote, String idJoueurInvite){
+
+---------------
+# Ajouts à ControleurPartieReseau
+
+public final class ControleurPartieReseau {
+
+    /*************** ajouts **************/
+
+    public void creerEtDemarrerPartie(final String idJoueurHote, final String idJoueurInvite) {
+        /*
+         * Créer le modèle avec getModele
+         * Ajouter les id usagers (joueur hôte et invité)
+         * Sauvegarder le modèle (pour l'envoyer vers le serveur)
+         * Démarrer partie
+         *
+         */
+
+    private void demarrerPartie(MPartieReseau partie) {
+        /*
+         * Utiliser une action pour faire la transition
+         * vers l'activité APartieReseau
+         * (avec l'objetJson de la partie en argument)
+         *
+         */
+
+
+
+---------------

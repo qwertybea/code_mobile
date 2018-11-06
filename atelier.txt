@@ -1,48 +1,51 @@
-<body ng-controller="root" root="" class="ng-scope"><div class="root ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/10/" markdown=""><div class="markdown"><h1 class="ng-scope">Atelier 10: Reconception et peaufinage</h1>
+<body ng-controller="root" root="" class="ng-scope"><div class="root ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie03/15/" markdown=""><div class="markdown"><h1 class="ng-scope">Atelier 15: attendre un.e adversaire</h1>
 
-<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/10/objectifs_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/10/objectifs_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Objectifs</h2>
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie03/15/objectifs_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie03/15/objectifs_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Objectifs</h2>
 
-<p class="ng-scope">À partir de l'application de l'Atelier #9:</p>
+<p class="ng-scope">À partir de l'application de l'Atelier #14:</p>
 
 <ol class="ng-scope">
-<li><em>Reconception</em>: s'assurer que chaque vue utilise:
-<ul><li>une observation pour obtenir le modèle</li>
-<li>des actions pour modifier le modèle ou pour passer à une autre activité</li></ul></li>
-<li><em>Reconception</em>: dans <code>MParametres</code>, le <code>pourGagner</code> maximum doit maintenant être calculé:
-<ul><li><code>pourGagnerMax = max(hauteur, largeur) * 75 / 100</code></li></ul></li>
-<li>Mise à jour «en direct» de la liste de choix de <code>pourGagner</code>:
-<ul><li>(note: le <code>pourGagner</code> est aussi ajusté lorsque trop haut pour le max)
-<center>
-<video width="250px" src="atelier10_pourgagner.webm" type="video/webm" autoplay="" loop="" muted="">
-</video></center></li></ul></li>
-<li>BONUS: Ajouter le code pour vérifier si un coup est possible
-<ul><li>désactiver le bouton si le coup est impossible
-<center>
-<video width="500px" src="atelier10_siexecutable.webm" type="video/webm" autoplay="" loop="" muted="">
-</video></center></li></ul></li>
-<li>BONUS: Dans <code>VParametres</code>, ajouter le bouton <em>Effacer partie courante</em>
-<center>
-<video width="500px" src="atelier10_effacer.webm" type="video/webm" autoplay="" loop="" muted="">
-</video></center></li>
-<li>BONUS: Durant la partie, surligner le prochain joueur à jouer
-<center>
-<video width="500px" src="atelier10_surligner_noms_joueurs.webm" type="video/webm" autoplay="" loop="" muted="">
-</video></center></li>
+<li>Ajouter l'activité <code>AEnAttenteAdversaire</code></li>
+<li>Implanter la logique pour jumeler deux adversaires en attente
+<ul><li>(voir la spécification pour les détails)
+<video width="500px" src="atelier15.webm" type="video/webm" autoplay="" loop="" muted=""></video></li></ul></li>
+</ol></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie03/15/etapes_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie03/15/etapes_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Étapes suggérées</h2>
+
+<h3 class="ng-scope">Étape 1) Ajouter l'activité <code>AEnAttenteAdversaire</code></h3>
+
+<ol class="ng-scope">
+<li>S'assurer d'avoir une vue avec un <code>progressBar</code></li>
+<li>Faire la transition vers cette activité quand l'usager appuie sur <em>Jouer en-ligne</em></li>
 </ol>
 
-<h3 class="ng-scope">NOTE</h3>
+<h3 class="ng-scope">Étape 2) Créer les singletons <code>JoueurInvite</code> et <code>JoueursEnAttente</code></h3>
 
-<ul class="ng-scope">
-<li>Les objectifs BONUS ne seront pas évalués, mais peuvent être ré-utilisés lors du projet à la semaine 12.</li>
-<li>Autrement dit, les BONUS permettent de prendre de l'avance sur le projet</li>
-</ul></div></div></span></p>
+<ol class="ng-scope">
+<li>S'assurer de les connecter au serveur quand l'activité <code>AEnAttenteAdversaire</code> est créée</li>
+<li>S'assurer d'inscrire le joueur comme joueur en attente</li>
+<li>Tester avec le Log et la console Firebase:
+<ul><li>un des joueurs en attente devient de joueur hôte et crée la partie réseau</li></ul></li>
+</ol>
 
-<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie02/10/specification_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie02/10/specification_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Spécification</h2>
+<h3 class="ng-scope">Étape 3) Compléter l'implantation</h3>
+
+<ol class="ng-scope">
+<li>Compléter le code de <code>MPartieReseau</code></li>
+<li>Compléter le code du <code>ControleurPartieReseau</code></li>
+<li>S'assurer de la transition vers <code>APartieReseau</code></li>
+</ol></div></div></span></p>
+
+<p class="ng-scope"><span src="/cegep/420-5B5-MO/ateliers/partie03/15/specification_contenu" ng-controller="embed" embed="" class="ng-scope"><div class="embed ng-scope" ng-controller="markdown" src="/cegep/420-5B5-MO/ateliers/partie03/15/specification_contenu" markdown=""><div class="markdown"><h2 class="ng-scope">Spécification</h2>
 
 <ul class="ng-scope">
 <li><p>Vous <strong>devez avoir</strong>:</p>
 
-<ul><li>chaque <em>classe et interface</em> de l'objectif</li>
+<ul><li>chaque <em>classe et interface</em>:
+<center>
+<img src="arborescence.png">
+</center></li>
 <li>chaque attribut ci-bas avec <strong>exactement</strong> le même type</li>
 <li>chaque méthode ci-bas avec <strong>exactement</strong> la même signature</li></ul></li>
 <li><p>Exception:</p>
@@ -50,122 +53,200 @@
 <ul><li>vous pouvez modifier/ajouter/ignorer des méthodes/attributs <code>private</code></li></ul></li>
 </ul>
 
-<h3 class="ng-scope">Ajouts à l'enum <code>GCommande</code></h3>
+<h3 class="ng-scope">Créer l'activité <code>AEnAttenteAdversaire</code></h3>
 
-<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/GCommande.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> GCommande {
+<h3 class="ng-scope">Layout <code>activity_en_attente_adversaire.xml</code></h3>
 
-    <span class="hljs-javadoc">/**** Ajouts  ******/</span>
+<ul class="ng-scope">
+<li>Avec un <code>progressBar</code> et un <code>TextView</code></li>
+</ul>
 
-    CHOISIR_HAUTEUR,
-    CHOISIR_LARGEUR,
-    CHOISIR_POUR_GAGNER,
+<h3 class="ng-scope">Classe <code>ProxyValeur</code></h3>
 
-    OUVRIR_MENU_PARAMETRES,
-    DEMARRER_PARTIE,
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie03/15/java/ProxyValeur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ProxyValeur</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Proxy</span> </span>{
 
-    EFFACER_PARTIE_COURANTE,
+    <span class="hljs-function"><span class="hljs-keyword">private</span> ValueEventListener valueEventListener
+
+    <span class="hljs-keyword">private</span> Action actionNouvelleValeur
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">boolean</span> valeurEcrite
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">ProxyValeur</span><span class="hljs-params">(String cheminServeur)</span> </span>{
+        <span class="hljs-keyword">super</span>(cheminServeur);
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setActionNouvelleValeur</span><span class="hljs-params">(GCommande commande)</span></span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connecterAuServeur</span><span class="hljs-params">()</span></span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">deconnecterDuServeur</span><span class="hljs-params">()</span></span>{
+
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireValeurs</span><span class="hljs-params">()</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">creerListener</span><span class="hljs-params">()</span></span>{
 </pre></code></div>
 
-<h2 class="ng-scope">BONUS</h2>
+<h3 class="ng-scope">Ajouts à <code>GCommande</code></h3>
 
-<h3 class="ng-scope">Ajouts à la classe <code>SourceDeDonnees</code></h3>
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie03/15/java/GCommande.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">package</span> ca.cours5b5.mathieubergeron.global;
 
-<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/SourceDeDonnees.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SourceDeDonnees</span> </span>{
 
-    <span class="hljs-javadoc">/******* Ajout ********/</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> GCommande {
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireSauvegarde</span><span class="hljs-params">(String cheminSauvegarde)</span></span>;
+    <span class="hljs-javadoc">/******** ajouts ***********/</span>
+
+    RECEVOIR_JOUEUR_EN_ATTENTE,
+    RECEVOIR_JOUEUR_INVITE,
 </pre></code></div>
 
-<h3 class="ng-scope">Ajouts au <code>ControleurModele</code></h3>
+<h3 class="ng-scope">Classe <code>JoueursEnAttente</code></h3>
 
-<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/ControleurModeles.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurModeles</span> </span>{
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie03/15/java/JoueursEnAttente.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">JoueursEnAttente</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Fournisseur</span> </span>{
+    
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> JoueursEnAttente instance
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> JoueursEnAttente <span class="hljs-title">getInstance</span><span class="hljs-params">()</span>
 
-    <span class="hljs-javadoc">/******** Ajouts aux méthodes ********/</span>
+    <span class="hljs-keyword">private</span> ProxyListe proxyJoueursEnAttente
+    <span class="hljs-keyword">private</span> String __joueursEnAttente
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireModele</span><span class="hljs-params">(String nomModele)</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-title">JoueursEnAttente</span><span class="hljs-params">()</span></span>{
         <span class="hljs-comment">/*
-         * Détruire les sauvegardes
-         * Si le modèle est en mémoire
-         *     - oublier le modèle
-         *     - detruire l'observation
-         *     - oublier le modèle comme fournisseur (s'il y a lieu)
+         * Créer et initialiser le proxy
+         * Fournir les actions
+         */</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">fournirActions</span><span class="hljs-params">()</span>
+        <span class="hljs-comment">/*
+         * Fournir l'action RECEVOIR_JOUEUR_EN_ATTENTE
+         */</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">fournirActionAjouterJoueurEnAttente</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-comment">/*
+         * Si le joueur en attente n'est pas l'usager courant
+         * Basculer en mode invitation
+         */</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">inscrireJoueurEnAttente</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-comment">/*
+         * Ajouter l'id de l'usager courant à la liste de joueurs en attente
+         * (utiliser le proxyJoueursEnAttente)
+         */</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">basculerEnModeInvitation</span><span class="hljs-params">(String idJoueurEnAttente)</span> </span>{
+        <span class="hljs-comment">/*
+         * Basculer en mode hôte ou en mode invite
+         *   à vous de choisir un test qui fonctionne pour chaque IdUsager
          *
          */</span>
 
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireSauvegardes</span><span class="hljs-params">(String nomModele)</span>
-</span></pre></code></div>
 
-<h3 class="ng-scope">Ajouts à la classe  <code>Action</code></h3>
-
-<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/Action.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Action</span> </span>{
-
-
-    <span class="hljs-javadoc">/******* Ajout *******/</span>
-
-
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">siExecutable</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">basculerEnModeHote</span><span class="hljs-params">(String idJoueurHote, String idJoueurInvite)</span> </span>{
         <span class="hljs-comment">/*
-         * Appeler le ConroleurAction
-         *  pour savoir si l'action est exécutable
-         */</span>
-</span></pre></code></div>
-
-<h3 class="ng-scope">Reconception du  <code>ListenerFournisseur</code></h3>
-
-<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/ListenerFournisseur.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ListenerFournisseur</span> </span>{
-
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">siExecutable</span><span class="hljs-params">(Object... args)</span>
-        <span class="hljs-comment">/*
-         * L'implantation par défaut retourne toujours vrai
+         * Créer et démarrer la partie à l'aide du ControleurPartieReseau
          *
          */</span>
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title">executer</span><span class="hljs-params">(Object... args)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">basculerEnModeInvite</span><span class="hljs-params">(String idJoueurHote, String idJoueurInvite)</span> </span>{
+        <span class="hljs-comment">/*
+         * ajouter les id usager à JoueurInvite
+         * connecter JoueurInvite au serveur
+         *
+         * (autrement dit, on attent d'être invité à la partie)
+         */</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connecterAuServeur</span><span class="hljs-params">()</span></span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">deconnecterDuServeur</span><span class="hljs-params">()</span> </span>{
+
 </pre></code></div>
 
-<h3 class="ng-scope">Ajouts au <code>ControleurAction</code></h3>
+<h3 class="ng-scope">Classe <code>JoueurInvite</code></h3>
 
-<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/ControleurAction.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurAction</span> </span>{
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie03/15/java/JoueurInvite.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">JoueurInvite</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Fournisseur</span> </span>{
 
-    <span class="hljs-javadoc">/********** Ajout aux méthodes *******/</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">JoueurInvite</span><span class="hljs-params">()</span></span>{}
 
-    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">siActionExecutable</span><span class="hljs-params">(Action action)</span>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> JoueurInvite instance
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> JoueurInvite <span class="hljs-title">getInstance</span><span class="hljs-params">()</span>
+
+    <span class="hljs-keyword">protected</span> String idJoueurInvite</span>;
+    <span class="hljs-keyword">protected</span> String idJoueurHote;
+
+    <span class="hljs-keyword">protected</span> ProxyValeur proxyInviterJoueur;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setIdJoueurs</span><span class="hljs-params">(String idJoueurHote, String idJoueurInvite)</span> </span>{
         <span class="hljs-comment">/*
-         * Si le listener existe, demander au listener
-         *   si l'action est executable
+         * Initialiser après avoir sauvegarder les données
          */</span>
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">oublierFournisseur</span><span class="hljs-params">(Fournisseur fournisseur)</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initialiser</span><span class="hljs-params">()</span> </span>{
         <span class="hljs-comment">/*
-         * Itérer les actions
-         *     - mettre le fournisseur à null s'il y a lieu
+         * Créer et initialiser le proxy
+         * Fournir l'action RECEVOIR_JOUEUR_INVITE
+         */</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connecterAuServeur</span><span class="hljs-params">()</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">deconnecterDuServeur</span><span class="hljs-params">()</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">getCheminPartie</span><span class="hljs-params">()</span></span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> String <span class="hljs-title">getCheminInviterJoueur</span><span class="hljs-params">()</span></span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">fournirActionRecevoirInvite</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-comment">/*
+         * Si le joueur courant est le joueur invité:
+         *    demarrerPartie
+         */</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">demarrerPartie</span><span class="hljs-params">()</span></span>{
+        <span class="hljs-comment">/*
+         * Charger la partie du serveur
+         * Démarrer la partie
+         */</span>
+</pre></code></div>
+
+<h3 class="ng-scope">Ajouts à <code>MPartieReseau</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie03/15/java/MPartieReseau.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MPartieReseau</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">MPartie</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Fournisseur</span>, <span class="hljs-title">Identifiable</span> </span>{
+
+    <span class="hljs-javadoc">/************* ajout ************/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setIdJoueurs</span><span class="hljs-params">(String idJoueurHote, String idJoueurInvite)</span></span>{
+</pre></code></div>
+
+<h3 class="ng-scope">Ajouts à <code>ControleurPartieReseau</code></h3>
+
+<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie03/15/java/ControleurPartieReseau.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurPartieReseau</span> </span>{
+
+    <span class="hljs-javadoc">/*************** ajouts **************/</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">creerEtDemarrerPartie</span><span class="hljs-params">(<span class="hljs-keyword">final</span> String idJoueurHote, <span class="hljs-keyword">final</span> String idJoueurInvite)</span> </span>{
+        <span class="hljs-comment">/*
+         * Créer le modèle avec getModele
+         * Ajouter les id usagers (joueur hôte et invité)
+         * Sauvegarder le modèle (pour l'envoyer vers le serveur)
+         * Démarrer partie
          *
          */</span>
-</span></pre></code></div>
 
-<h3 class="ng-scope">Ajouts au <code>ControleurObservation</code></h3>
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">demarrerPartie</span><span class="hljs-params">(MPartieReseau partie)</span> </span>{
+        <span class="hljs-comment">/*
+         * Utiliser une action pour faire la transition
+         * vers l'activité APartieReseau
+         * (avec l'objetJson de la partie en argument)
+         *
+         */</span>
 
-<div class="file ng-scope" src="/cegep/420-5B5-MO/ateliers/partie02/10/java/ControleurObservation.java" extension="java" file=""><code class="hljs java"><pre><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ControleurObservation</span> </span>{
 
-    <span class="hljs-javadoc">/******** Ajouts aux méthodes *********/</span>
-
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">detruireObservation</span><span class="hljs-params">(Modele modele)</span>
-</span></pre></code></div></div></div></span></p>
+</pre></code></div></div></div></span></p>
 
 <h2 class="ng-scope">Remise</h2>
 
 <ol class="ng-scope">
-<li>Identifier votre dernier commit avec le Tag exact <code>atelier10</code></li>
-</ol>
-
-<!--
-## Théorie / procédures
-
--->
-
-<!--
-
-<span src='/cegep/420-5B5-MO/theorie/android/android01' ng-controller='embed' embed></span>
-
---></div><div id="procs"><div id="procs-cover" class="cover ng-scope" style="display:none" ng-click="hide_procs();"></div></div></div></body>
+<li>Identifier votre dernier commit avec le Tag exact <code>atelier15</code></li>
+</ol></div><div id="procs"><div id="procs-cover" class="cover ng-scope" style="display:none" ng-click="hide_procs();"></div></div></div></body>

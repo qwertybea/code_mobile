@@ -1,0 +1,236 @@
+# Étape 1) Signer le build debug de votre application (et noter la signature)
+
+$ cd ~MonProjet
+$ git add debug.jks
+
+---------------
+# Aller au répertoire de votre projet
+$ cd ~MonProjet
+
+# Exécuter keytool.exe
+# (Adapter le chemin à votre version du JRE)
+$ /c/Program\ Files/Java/jre-VERSION/bin/keytool.exe -list -keystore debug.jks
+
+    # entrer le mot de passe
+    # prendre en note la signature
+
+---------------
+# Étape 3) Ajouter votre application au projet Firebase
+
+$ git add app/google-services.json
+
+---------------
+implementation 'com.google.firebase:firebase-core:16.0.1'
+
+---------------
+implementation 'com.firebaseui:firebase-ui-database:3.3.1'
+implementation 'com.firebaseui:firebase-ui-auth:3.3.1'
+
+---------------
+# Étape 5) Créer et configurer la base de données Firebase
+
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null"
+  }
+}
+
+---------------
+# Ajout au ControleurModeles
+
+public final class ControleurModeles {
+
+        /******* Ajouts aux méthodes ******/
+
+        private static String getCheminSauvegarde(String nomModele)
+            /*
+             * Le chemin est de la forme:
+             *
+             * nomModele/idUsager
+             *
+             * Par exemple:
+             *
+             * MPartie/T1m8GxiBAlhLUcF6Ne0GV06nnEg1
+             *
+             */
+
+---------------
+# Ajout à SourceDeDonnees
+
+public abstract class SourceDeDonnees {
+
+    /***** ajout *******/
+
+    protected String getNomModele(String cheminSauvegarde){
+        /*
+         * Pour un chemin de sauvegarde de la forme nomModele/ID
+         *
+         * retourner le nomModele
+         *
+         */
+
+---------------
+# Modifications à SauvegardeTemporaire
+
+public class SauvegardeTemporaire extends SourceDeDonnees {
+
+
+    /****** modifications ********/
+
+    @Override
+    public Map<String, Object> chargerModele(String cheminSauvegarde) {
+        /*
+         * Utiliser getCle pour obtenir la clé de sauvegarde
+         *
+         */
+
+    @Override
+    public void sauvegarderModele(String cheminSauvegarde, Map<String, Object> objetJson) {
+        /*
+         * Utiliser getCle pour obtenir la clé de sauvegarde
+         *
+         */
+
+    private String getCle(String cheminSauvegarde){
+        /*
+         * Utiliser le nomModele comme clé de sauvegarde
+         *
+         * P.ex: MPartie/T1m8GxiBAlhLUcF6Ne0GV06nnEg1 => MPartie
+         *
+         */
+
+---------------
+# Modifications à Disque
+
+public final class Disque extends SourceDeDonnees {
+
+    /******** modification **********/
+
+    private File getFichier(String cheminSauvegarde) {
+        /*
+         * Obtenir le nomModele et l'utiliser pour le nom du fichier
+         *
+         * p.ex. MParametres/T1m8GxiBAlhLUcF6Ne0GV06nnEg1 => MParametres.json
+         *
+         */
+
+---------------
+# Classe Serveur
+
+public final class Serveur extends SourceDeDonnees
+
+    /* 
+     * Serveur est un singleton
+     */
+
+    private Serveur(){}
+
+    private static final Serveur instance
+
+    public static Serveur getInstance()
+
+
+    @Override
+    public void sauvegarderModele(String cheminSauvegarde, Map<String, Object> objetJson)
+        /*
+         * Sauvegarder sur le serveur
+         *
+         * Utiliser FirebaseDatabase et DatabaseReference
+         *
+         */
+
+
+    @Override
+    public Map<String, Object> chargerModele(String cheminSauvegarde)
+        /*
+         * BONUS: est-ce possible d'implanter cette méthode avec cette signature?
+         */
+
+    @Override
+    public void detruireSauvegarde(String cheminSauvegarde)
+        /*
+         * BONUS
+         */
+
+
+}
+
+---------------
+# Classe UsagerCourant
+
+public class UsagerCourant {
+
+    public static boolean siUsagerConnecte()
+        /*
+         * Retourne vrai si l'usager est connecté
+         *
+         * Utiliser FirebaseAuth
+         *
+         */
+
+    public static String getId()
+        /*
+         * Retourne l'identifiant de l'usager connecté
+         * Sinon retourner un ID par défaut
+         *
+         * Utiliser FirebaseAuth
+         *
+         */
+
+---------------
+# Firebase: le code de connexion
+
+List<AuthUI.IdpConfig> fournisseursDeConnexion = new ArrayList<>();
+
+fournisseursDeConnexion.add(new AuthUI.IdpConfig.GoogleBuilder().build());
+fournisseursDeConnexion.add(new AuthUI.IdpConfig.EmailBuilder().build());
+fournisseursDeConnexion.add(new AuthUI.IdpConfig.PhoneBuilder().build());
+
+Intent intentionConnexion = AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(fournisseursDeConnexion)
+            .build();
+
+this.startActivityForResult(intentionConnexion, MA_CONSTANTE_CODE_CONNEXION);
+---------------
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    if (requestCode == MA_CONSTANTE_CODE_CONNEXION) {
+
+        if (resultCode == RESULT_OK) {
+
+            // Connexion réussie
+
+        } else {
+
+            // connexion échouée
+        }
+    }
+}
+---------------
+AuthUI.getInstance()
+        .signOut(this)
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            public void onComplete(@NonNull Task<Void> task) {
+
+                // Déconnexion terminée
+            }
+        });
+---------------
+# Firebase: écrire dans la base de données
+
+String chemin = //
+DatabaseReference noeud = FirebaseDatabase.getInstance().getReference(chemin);
+---------------
+Map<String, Object> objetJson = //
+noeud.setValue(objetJson);
+---------------
+# Firebase: effacer une donnée
+
+String chemin = //
+DatabaseReference noeud = FirebaseDatabase.getInstance().getReference(chemin);
+---------------
+noeud.removeValue();
+---------------

@@ -1,0 +1,428 @@
+# Ajouts à GConstantes
+
+public final class GConstantes {
+
+    /********* ajouts *********/
+
+    public static final int NOMBRE_DE_VALEURS_A_CHARGER_DU_SERVEUR_PAR_DEFAUT = 10;
+
+    public static final String CLE_ID_JOUEUR_HOTE = "idJoueurHote";
+    public static final String CLE_ID_JOUEUR_INVITE = "idJoueurInvite";
+
+    public static final String CLE_COUPS_JOUEUR_HOTE = "coupsJoueurHote";
+    public static final String CLE_COUPS_JOUEUR_INVITE = "coupsJoueurInvite";
+
+    // TODO: remplacer les IDs par ceux de vos 2 usagers de test
+    public static final String FIXME_JSON_PARTIE_RESEAU = "{\"listeCoups\":[],\"parametres\":{\"largeur\":\"7\",\"pourGagner\":\"4\",\"hauteur\":\"6\"},\"idJoueurInvite\":\"PHMRKe3q7zOhfQQOwemjtfBFNp12\",\"idJoueurHote\":\"T1m8GxiBAlhLUcF6Ne0GV06nnEg1\"}";
+
+---------------
+# Ajouts à GCommande
+
+public enum GCommande {
+
+    /***** ajouts ****/
+
+    JOINDRE_OU_CREER_PARTIE_RESEAU,
+    RECEVOIR_COUP_RESEAU,
+
+---------------
+# Modifications à VPartie
+
+public class VPartie extends Vue {
+
+    /********* modifications ***********/
+
+    private void observerPartie() {
+        /*
+         * Appeler getNomModele() pour installer l'observation
+         *
+         */
+
+    protected String getNomModele(){
+
+---------------
+# Classe VPartieReseau
+
+public class VPartieReseau extends VPartie {
+
+    public VPartieReseau(Context context) {
+        super(context);
+    }
+
+    public VPartieReseau(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public VPartieReseau(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+
+    @Override
+    protected String getNomModele(){
+
+---------------
+# Ajouts à AMenuPrincipal
+
+public class AMenuPrincipal extends Activite implements Fournisseur {
+
+    /****** ajouts *****/
+
+    private void fournirActionJoindreOuCreerPartieReseau() {
+
+    private void transitionPartieReseau() {
+        /*
+         * Ajouter le FIXME_JSON_PARTIE_RESEAU dans les Extras de l'intention
+         *
+         */
+
+---------------
+# Classe APartieReseau
+
+public class APartieReseau extends Activite implements Fournisseur {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_partie_reseau);
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /*
+         * Avec ControleurPartieReseau, détruire la partie sur le serveur
+         * Déconnecter ControleurPartieReseau du serveur
+         */
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*
+         * Connecter le ControleurPartieReseau au serveur
+         *
+         */
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        /*
+         * BONUS: avec ControleurModeles, détruire le modèle MPartieReseau
+         *
+         */
+
+---------------
+# Interface Identifiable
+
+public interface Identifiable {
+
+    String getId();
+
+---------------
+# Modifications à ControleurModeles
+
+public final class ControleurModeles {
+
+
+    /********* modification **********/
+
+    static String getCheminSauvegarde(String nomModele){
+        /*
+         * si le modèle est Identifiable, alors le chemin est nomModele/idModele
+         * sinon, le chemin est nomModele/idUsager
+         *
+         */
+
+---------------
+# Classe MPartieReseau
+
+public class MPartieReseau extends MPartie implements Fournisseur, Identifiable {
+
+    @AttributSerialisable
+    public String idJoueurInvite
+    private String __idJoueurInvite
+
+    @AttributSerialisable
+    public String idJoueurHote
+    private String __idJoueurHote
+
+    public MPartieReseau(MParametresPartie parametres) {
+        super(parametres);
+
+    public String getId() {
+        /*
+         * utiliser l'id du joueur hôte
+         */
+
+    private void fournirActionRecevoirCoup() {
+
+    @Override
+    protected void fournirActionPlacerJeton() {
+        /*
+         * En plus de jouer le coup, le transmettre via
+         *  le ControleurPartieReseau
+         *
+         *  ATTENTION au @Override. Le code qui fournit l'action 
+         *  PLACER_JETON dans la classe parent MPartie
+         *  ne doit **pas** s'exécuter
+         */
+
+
+    private void recevoirCoupReseau(int colonne){
+
+    @Override
+    public void aPartirObjetJson(Map<String, Object> objetJson) throws ErreurSerialisation {
+        /*
+         * charger les champs
+         * appeler aussi super
+         */
+
+    @Override
+    public Map<String, Object> enObjetJson() throws ErreurSerialisation {
+        /*
+         * sauvegarder les champs
+         * appeler aussi super
+         */
+
+---------------
+# Modifications à Activite
+
+public abstract class Activite extends AppCompatActivity {
+
+
+    /******* modification *********/
+
+    protected void initialiserControleurModeles(Bundle savedInstanceState) {
+        /*
+         * ajouter Transition dans la séquence de chargement
+         *     utiliser les extras de l'intention pour initialiser Transition
+         *
+         */
+
+---------------
+# Classe Transition
+
+public class Transition extends SauvegardeTemporaire {
+
+    public Transition(Bundle bundle) {
+        super(bundle);
+
+---------------
+# Classe Proxy
+
+public abstract class Proxy {
+
+    private String cheminServeur;
+
+    protected DatabaseReference noeudServeur;
+
+    public Proxy(String cheminServeur){
+
+    public void connecterAuServeur(){
+        /*
+         * Obtenir le noeud
+         *
+         */
+
+    public void deconnecterDuServeur(){
+        /*
+         * Oublier le noeud
+         *
+         */
+
+    public abstract void detruireValeurs();
+
+---------------
+# Classe ProxyListe
+
+public class ProxyListe extends Proxy implements Fournisseur {
+
+    private ChildEventListener childEventListener;
+
+    private Query requete;
+
+    private Action actionNouvelItem;
+
+    private List<DatabaseReference> noeudsAjoutes;
+
+    public ProxyListe(String cheminServeur) {
+
+    public void setActionNouvelItem(GCommande commande){
+
+    public void ajouterValeur(Object valeur) {
+        /*
+         * Créer un sous-noeud avec push()
+         * Mémoriser le noeud ajouté
+         * Ajouter la valeur avec setValue()
+         */
+
+    @Override
+    public void connecterAuServeur(){
+        super.connecterAuServeur();
+
+        /* 
+         * Céer le listener
+         * sauvegarder la requête
+         * ajouter le listener
+         */
+
+    private void creerListener(){
+
+    protected Query getRequete(){
+        /*
+         * On veut trier par clé et limiter à un nombre max (utiliser une constante)
+         */
+
+
+    @Override
+    public void deconnecterDuServeur() {
+        /*
+         * retirer le listener
+         * oublier les noeuds ajoutés
+         * déconnecter via super
+         */
+
+    @Override
+    public void detruireValeurs() {
+
+---------------
+# Classe ControleurPartieReseau
+
+public final class ControleurPartieReseau {
+
+    private static final ControleurPartieReseau instance
+    public static ControleurPartieReseau getInstance()
+
+    private ProxyListe proxyEmettreCoups;
+    private ProxyListe proxyRecevoirCoups;
+
+    public void connecterAuServeur(){
+        /*
+         * Obtenir le modèle MPartieReseau
+         * Obtenir le id du modèle (qui est l'id du joueur hôte)
+         * Appeler connecterAuServeur(String idJouerHote)
+         *
+         */
+
+    private void connecterAuServeur(String idJoueurHote) {
+        /*
+         * Connecter en tant que joueur hôte OU en tant qu'invité, selon le cas
+         *
+         * Connecter les deux proxy au serveur
+         *
+         * Ajouter l'action RECEVOIR_COUP_RESEAU au proxyRecevoirCoups
+         *
+         */
+
+    private void connecterEnTantQueJoueurHote(String cheminCoupsJoueurHote, String cheminCoupsJoueurInvite) {
+        /*
+         * Créer les proxy... avec les bons chemins
+         *
+         */
+
+   private void connecterEnTantQueJoueurInvite(String cheminCoupsJoueurHote, String cheminCoupsJoueurInvite) {
+        /*
+         * Créer les proxy... avec les bons chemins
+         *
+         */
+
+    public void deconnecterDuServeur(){
+        /* 
+         * Détruire les valeurs du proxyEmettreCoups
+         *
+         * Déconnecter les deux proxy
+         *
+         */
+
+    public void transmettreCoup(Integer idColonne){
+        /*
+         * Transmettre avec proxyEmettreCoups
+         *
+         */
+
+    private String getCheminCoupsJoueurInvite(String idJoueurHote){
+        /*
+         * Utiliser p.ex. la constante CLE_COUPS_JOUR_INVITE
+         */
+
+    private String getCheminCoupsJoueurHote(String idJoueurHote){
+        /*
+         * Utiliser p.ex. la constante CLE_COUPS_JOUR_HOTE
+         */
+
+    private String getCheminPartie(String idJoueurHote){
+        /*
+         * Le chemin contient l'id de la partie (id du joueur hote)
+         */
+
+    public void detruireSauvegardeServeur() {
+        /*
+         * Appeler p.ex. le detruireSauvegarde de Serveur (avec le bon chemin)
+         */
+
+---------------
+# Passer des valeurs via l'intention
+
+Intent monIntention = new Intent(this, AMonActivite.class);
+
+monIntention.putExtra("Cle", "Valeur");
+
+this.startActivity(monIntention);
+---------------
+# Récupérer les valeurs
+
+getIntent().getExtras().getString("Cle");
+---------------
+# Inclure dans la séquence de chargement
+
+new Transition(getIntent().getExtras());
+---------------
+# Firebase: créer une requête
+
+String chemin = //
+DatabaseReference noeud = FirebaseDatabase.getInstance().getReference(chemin);
+
+Query requete = noeudServeur.orderByValue().limitToLast(10);
+---------------
+# Firebase: lire les valeurs d'une liste
+
+requete.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Object valeurAjoutee = dataSnapshot.getValue();
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+---------------
+# Proxy
+
+monProxy = new ProxyListe("chemin/sur/serveur");
+---------------
+monProxy.connecterAuServeur();
+---------------
+monProxy.detruireValeurs();
+---------------
+monProxy.deconnecterDuServeur();
+---------------
+# ProxyListe et ControleurAction
+
+monProxy.setActionNouvelItem(GCommande.COMMANDE_POUR_NOUVEL_ITEM);
+---------------

@@ -1,0 +1,91 @@
+# Classe GDirection
+
+public class GDirection {
+
+    public int incrementHorizontal;
+    public int incrementVertical;
+
+    public static List<GDirection> directions;
+
+    static{
+
+        /*
+         * Créer les directions
+         *
+         * (BONUS: a-t-on besoin de toutes les créer?)
+         *
+         */
+
+    }
+
+    public GDirection(int incrementHorizontal, int incrementVertical){
+
+---------------
+# Modifications à MPartie
+
+public class MPartie extends Modele implements Fournisseur {
+
+
+    /********** modifications ************/
+
+    protected void jouerCoup(int colonne) {
+        /*
+         * Vérifier si la partie est gagnée
+         * Si oui, appeler le ControleurPartie
+         * pour le signifier
+         */
+
+---------------
+# Ajouts à MGrille
+
+public class MGrille extends Modele  {
+
+    /*********** ajouts **************/
+
+    public boolean siCouleurGagne(GCouleur couleur, int pourGagner){
+
+    private boolean siCouleurGagneCetteColonne(GCouleur couleur, int idColonne, int pourGagner){
+
+    private boolean siCouleurGagneCetteCase(GCouleur couleur, int idColonne, int idRangee, int pourGagner) {
+
+    private boolean siCouleurGagneDansCetteDirection(GCouleur couleur, int idColonne, int idRangee, GDirection direction, int pourGagner) {
+
+    private boolean siMemeCouleurCetteCase(GCouleur couleur, int idColonne, int idRangee){
+
+---------------
+# Classe ControleurPartie
+
+public final class ControleurPartie {
+
+    private ControleurPartie(){}
+
+    private static final ControleurPartie instance
+    public static ControleurPartie getInstance()
+
+    public void gagnerPartie(GCouleur couleurGagnante){
+        /*
+         * Utiliser une action pour afficher le message au gagnant
+         *
+         */
+
+---------------
+# Fenêtre Snackbar
+
+String message = //
+View maVue = //
+Snackbar fenetreMessage = Snackbar.make(maVue, message, Snackbar.LENGTH_SHORT);
+fenetreMessage.show();
+---------------
+Snackbar fenetreMessage = Snackbar.make(maVue, message, Snackbar.LENGTH_SHORT);
+
+fenetreMessage.addCallback(new Snackbar.Callback() {
+
+    @Override
+    public void onDismissed(Snackbar snackbar, int event) {
+
+        // Le message n'est plus affiché
+
+    });
+
+fenetreMessage.show();
+---------------

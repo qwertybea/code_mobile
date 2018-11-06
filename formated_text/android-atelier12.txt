@@ -1,0 +1,175 @@
+# Interface ListenerChargement
+
+public interface ListenerChargement {
+
+    void reagirSucces(Map<String, Object> objetJson);
+    void reagirErreur(Exception e);
+
+---------------
+# Interface ListenerGetModele
+
+public interface ListenerGetModele {
+
+    void reagirAuModele(Modele modele);
+
+---------------
+# Modifications à SourceDeDonnees
+
+public abstract class SourceDeDonnees {
+
+    /***** nouvelle signature *******/
+    public abstract void chargerModele(final String cheminSauvegarde, final ListenerChargement listenerChargement);
+
+---------------
+# Modifications à Activite
+
+public abstract class Activite extends AppCompatActivity {
+
+
+    /******* modification *********/
+
+    protected void initialiserControleurModeles(Bundle savedInstanceState) {
+        /*
+         * ajouter Serveur dans la séquence de chargement
+         *
+         */
+
+---------------
+# Ajout au ControleurModeles
+
+public final class ControleurModeles {
+
+    /***** nouvelles signatures *******/
+
+    static void getModele(String nomModele, ListenerGetModele listenerGetModele){
+
+    private static void creerModeleSelonNom(String nomModele, final ListenerGetModele listenerGetModele) throws ErreurModele {
+
+
+    /***** ajouts  *******
+     *
+     * Voir schéma ci-bas
+     * Attention aux trois conditions
+     * Attention à la méthode creerModeleEtChargerDonnees qui doit aussi mémoriser le modèle
+     *
+     */
+
+
+    private static void creerModeleEtChargerDonnees(final String nomModele, 
+                                                    final ListenerGetModele listenerGetModele) {
+        /*
+         * Aussi: mémoriser le modèle dans modelesEnMemoire
+         */
+
+
+    private static void chargerDonnees(Modele modele, 
+                                       String nomModele, 
+                                       ListenerGetModele listenerGetModele) {
+
+    private static void chargementViaSequence(Modele modele,
+                                              String cheminDeSauvegarde,
+                                              ListenerGetModele listenerGetModele,
+                                              int indiceSourceCourante){
+
+    private static void chargementViaSourceCouranteOuSuivante(final Modele modele,
+                                                              final String cheminDeSauvegarde,
+                                                              final ListenerGetModele listenerGetModele,
+                                                              final int indiceSourceCourante) {
+
+    private static void terminerChargementAvecDonnees(Map<String, Object> objetJson, 
+                                                      Modele modele, 
+                                                      ListenerGetModele listenerGetModele) {
+
+    private static void terminerChargement(Modele modele,
+                                           ListenerGetModele listenerGetModele) {
+
+    private static void chargementViaSourceSuivante(Modele modele,
+                                                    String cheminDeSauvegarde,
+                                                    ListenerGetModele listenerGetModele,
+                                                    int indiceSourceCourante) {
+
+---------------
+# Firebase: lire une valeur à partir de la base de données
+
+String chemin = //
+DatabaseReference noeud = FirebaseDatabase.getInstance().getReference(chemin);
+---------------
+noeud.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()){
+
+                    Map<String, Object> objetJson = (Map<String, Object>) dataSnapshot.getValue();
+
+                    // Données lues
+
+                }else{
+
+                    // Pas de données dans ce noeud
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                    // Erreur de lecture
+
+            }
+        });
+---------------
+# Appels et retours de méthodes
+
+public static int methodeA(){
+
+    boolean retourB = methodeB("test");
+
+    return retourB ? 10 : 0 ;
+}
+
+public static boolean methodeB(String arg){
+
+    if(arg.equals("pouet"){
+
+        return true;
+
+    }else{
+
+        return false;
+
+    }
+}
+---------------
+# Appels et retours asynchrones
+
+public static void methodeA(ListenerRetourA listenerRetourA){
+
+    methodeB("test", new ListenerRetourB(){
+
+                @Override
+                public void reagirRetourB(boolean retourB){
+
+                    int retourA =  retourB ? 10 : 0 ;
+
+                    listenerRetourA.reagirRetourA(retourA);
+
+                }
+            });
+}
+
+public static void methodeB(String arg, ListenerRetourB listenerRetourB){
+
+    if(arg.equals("pouet"){
+
+        listenerRetourB.reagirRetourB(true);
+
+        // NOTE: il n'y pas de return, la méthode pourrait continuer ici
+
+    }else{
+
+        listenerRetourB.reagirRetourB(false);
+
+    }
+}
+---------------
